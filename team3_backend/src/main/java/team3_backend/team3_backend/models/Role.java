@@ -1,5 +1,6 @@
 package team3_backend.team3_backend.models;
 
+
 import org.springframework.security.core.GrantedAuthority;
 
 import jakarta.persistence.Column;
@@ -16,7 +17,7 @@ public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name=role_id)
+    @Column(name="role_id")
     private Integer roleId;
 
     private String authority;
@@ -39,7 +40,7 @@ public class Role implements GrantedAuthority {
         return this.authority;
     }
     
-    public void setAuthority(string authority){
+    public void setAuthority(String authority){
         this.authority=authority;
 
     }

@@ -2,9 +2,10 @@ package team3_backend.team3_backend.models;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.ManyToAny;
-import org.hibernate.mapping.Set;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -27,8 +28,8 @@ public class ApplicationUser implements UserDetails{
     @Column(name = "user_id")
     private Integer userId;
 
-    private string username;
-    private string password;
+    private String username;
+    private String password;
     
     @ManyToAny(fetch = FetchType.EAGER)
     @JoinTable(
@@ -50,51 +51,72 @@ public class ApplicationUser implements UserDetails{
 		this.username = username;
 		this.password = password;
 		this.authorities = authorities;
+	} 
+
+    public Integer getUserId() {
+		return this.userId;
+	}
+	
+	public void setId(Integer userId) {
+		this.userId = userId;
+	}
+	
+	public void setAuthorities(Set<Role> authorities) {
+		this.authorities = authorities;
 	}
 
     
 
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
-    }
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		
+		return this.authorities;
+	}
 
-    @Override
-    public String getPassword() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPassword'");
-    }
+	@Override
+	public String getPassword() {
+		
+		return this.password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    @Override
-    public String getUsername() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
-    }
+	@Override
+	public String getUsername() {
+		
+		return this.username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	/* If you want account locking capabilities create variables and ways to set them for the methods below */
+	@Override
+	public boolean isAccountNonExpired() {
+		
+		return true;
+	}
 
-    @Override
-    public boolean isAccountNonExpired() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonExpired'");
-    }
+	@Override
+	public boolean isAccountNonLocked() {
+		
+		return true;
+	}
 
-    @Override
-    public boolean isAccountNonLocked() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonLocked'");
-    }
+	@Override
+	public boolean isCredentialsNonExpired() {
+		
+		return true;
+	}
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isCredentialsNonExpired'");
-    }
-
-    @Override
-    public boolean isEnabled() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
-    }
+	@Override
+	public boolean isEnabled() {
+		
+		return true;
+	}
     
 }
