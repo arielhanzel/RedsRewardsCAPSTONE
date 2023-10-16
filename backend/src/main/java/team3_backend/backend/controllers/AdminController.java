@@ -13,7 +13,7 @@ public class AdminController {
     
     @GetMapping("/")
     public String helloAdmineController(){
-        return "Admin level access";
+        return "Hi, admin. You made up to here";
     }
 
 }

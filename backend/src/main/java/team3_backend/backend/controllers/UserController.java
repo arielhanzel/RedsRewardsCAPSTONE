@@ -12,7 +12,7 @@ public class UserController {
 
     @GetMapping("/")
     public String helloUserController(){
-        return "User access level";
+        return "Hi user, you cannot alter database, sorry for that!";
     }
     
 }
