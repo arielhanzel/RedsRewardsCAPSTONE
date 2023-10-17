@@ -10,7 +10,15 @@
           v-model="password"
           required
         />
-        <button type="submit">Log In</button>
+        <button type="submit" @click="useStore.login(username, password)">
+          Log In
+        </button>
+        <span>
+          <br />
+          <br />
+          Don't have an account? Sign up
+          <router-link to="/signup">here</router-link>.
+        </span>
       </form>
     </div>
   </div>
@@ -80,25 +88,9 @@ button[type="submit"]:hover {
 }
 </style>
 
-<script>
-export default {
-  data() {
-    return {
-      username: "",
-      password: "",
-    };
-  },
-  methods: {
-    login() {
-      // Need backend implementation
-      if (this.username === "username" && this.password === "password") {
-        // Successfull login if username = "username" and password = "password"
-        alert("Login successful!");
-      } else {
-        // Failed login
-        alert("Invalid username or password");
-      }
-    },
-  },
-};
+<script setup>
+import { useUserStore } from "@/store";
+const useStore = useUserStore();
+const username = "";
+const password = "";
 </script>
