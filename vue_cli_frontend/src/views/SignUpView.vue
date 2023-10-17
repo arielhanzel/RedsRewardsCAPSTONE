@@ -11,7 +11,12 @@
           v-model="password"
           required
         />
-        <button type="submit">Sign Up</button>
+        <button
+          @click="useStore.signup(username, email, password)"
+          type="submit"
+        >
+          Sign Up
+        </button>
       </form>
     </div>
   </div>
@@ -82,19 +87,10 @@ button[type="submit"]:hover {
 }
 </style>
 
-<script>
-export default {
-  data() {
-    return {
-      username: "",
-      email: "",
-      password: "",
-    };
-  },
-  methods: {
-    signup() {
-      alert("Sign Up functionality to be implemented.");
-    },
-  },
-};
+<script setup>
+import { useUserStore } from "@/store";
+const useStore = useUserStore();
+const username = "";
+const email = "";
+const password = "";
 </script>

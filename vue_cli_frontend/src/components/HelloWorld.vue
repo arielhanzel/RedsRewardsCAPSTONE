@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <h1>Welcome to Red's Rewards!</h1>
     <p>
       Earn points to redeem exciting rewards!<br />
       Learn more about how to earn points
@@ -9,42 +9,26 @@
 
     <div class="gamification">
       <div class="points">
-        <span>Points: {{ userPoints }}</span>
+        <span>Points: {{ useStore.points }}</span>
       </div>
       <div class="progress-bar">
         <div
           class="progress"
-          :style="{ width: progressPercentage + '%' }"
+          :style="{ width: useStore.progressPercentage + '%' }"
         ></div>
       </div>
       <div>
-        <span> {{ pointsToGoal }} points until your next milestone!</span>
+        <span>
+          {{ useStore.pointsToGoal }} points until your next milestone!</span
+        >
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "HelloWorld",
-  props: {
-    msg: String,
-  },
-  data() {
-    return {
-      userPoints: 220,
-      totalPoints: 1000, // Set your desired total points for progress completion
-    };
-  },
-  computed: {
-    progressPercentage() {
-      return (this.userPoints / this.totalPoints) * 100;
-    },
-    pointsToGoal() {
-      return this.totalPoints - this.userPoints;
-    },
-  },
-};
+<script setup>
+import { useUserStore } from "@/store";
+const useStore = useUserStore();
 </script>
 
 <style scoped>
@@ -79,7 +63,7 @@ a {
   width: 80%;
   background-color: #eee;
   margin: 10px auto;
-  border-radius: 5px;
+  border-radius: 10px;
   height: 20px;
   overflow: hidden;
 }

@@ -3,16 +3,29 @@
     <router-link to="/">
       <h1 class="app-name">Red's Rewards</h1>
     </router-link>
-    <div class="menu-toggle" @click="toggleMenu">
+    <div
+      class="menu-toggle"
+      @click="toggleMenu"
+      @mouseenter="isCursorOverMenu = true"
+      @mouseleave="isCursorOverMenu = false"
+    >
       <span></span>
       <span></span>
       <span></span>
     </div>
-    <nav :class="{ 'show-menu': isMenuOpen }">
+    <nav
+      :class="{ 'show-menu': isMenuOpen || isCursorOverMenu }"
+      @mouseenter="isCursorOverMenu = true"
+      @mouseleave="isCursorOverMenu = false"
+      @click="isCursorOverMenu = false"
+    >
       <router-link to="/">Home</router-link>
       <router-link to="/about">About</router-link>
-      <router-link to="/login">Login</router-link>
-      <router-link to="/signup">Sign Up</router-link>
+      <router-link v-if="useStore.loggedIn" @click="useStore.logout" to="/login"
+        >Logout</router-link
+      >
+      <router-link v-if="!useStore.loggedIn" to="/login">Login</router-link>
+      <router-link v-if="!useStore.loggedIn" to="/signup">Sign Up</router-link>
     </nav>
   </div>
   <router-view />
@@ -23,14 +36,35 @@ export default {
   data() {
     return {
       isMenuOpen: false,
+      isCursorOverMenu: false,
     };
   },
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
     },
+    menuClick() {
+      this.isCursorOverMenu = true; // Prevent the click event from reaching document click listener
+    },
+  },
+  mounted() {
+    document.addEventListener("click", this.closeMenuOnClick);
+  },
+  beforeUnmount() {
+    document.removeEventListener("click", this.closeMenuOnClick);
+  },
+  closeMenuOnClick() {
+    if (!this.isCursorOverMenu) {
+      // Close only if not over the menu
+      this.isMenuOpen = false;
+    }
   },
 };
+</script>
+
+<script setup>
+import { useUserStore } from "@/store";
+const useStore = useUserStore();
 </script>
 
 <style>
@@ -94,7 +128,7 @@ nav a.router-link-exact-active {
     cursor: pointer;
     position: absolute;
     top: 1em;
-    right: 3em;
+    right: 2.3em;
   }
 
   .menu-toggle span {
@@ -111,6 +145,12 @@ nav a.router-link-exact-active {
   }
 
   .show-menu {
+    position: absolute;
+    top: 49px;
+    right: 1em;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
