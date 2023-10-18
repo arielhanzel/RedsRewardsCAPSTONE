@@ -81,6 +81,8 @@ button[type="submit"]:hover {
 </style>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
@@ -89,14 +91,27 @@ export default {
     };
   },
   methods: {
-    login() {
-      // Need backend implementation
-      if (this.username === "username" && this.password === "password") {
-        // Successfull login if username = "username" and password = "password"
-        alert("Login successful!");
-      } else {
-        // Failed login
-        alert("Invalid username or password");
+    async login() {
+      try {
+        // Calling the backend
+        var response = await axios.post("http://localhost:8000/auth/login", {
+          username: this.username,
+          password: this.password,
+        });
+
+        if (response.data.jwt) {
+          // Assuming the server returns a token on successful login
+          alert("login Successful   " + "Token   " + response.data.jwt);
+
+          // Optionally, you can store the token in localStorage or Vuex store, etc.
+          // localStorage.setItem('token', response.data.token);
+        } else {
+          alert(response.data.jwt);
+        }
+      } catch (error) {
+        // Handle error scenarios here
+        alert("Failed to login. Please try again later.");
+        console.error("Error logging in:", error);
       }
     },
   },
