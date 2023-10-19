@@ -9,9 +9,9 @@
       @mouseenter="isCursorOverMenu = true"
       @mouseleave="isCursorOverMenu = false"
     >
-      <span></span>
-      <span></span>
-      <span></span>
+      <span :class="{ bar1: isMenuOpen }"></span>
+      <span :class="{ bar2: isMenuOpen }"></span>
+      <span :class="{ bar3: isMenuOpen }"></span>
     </div>
     <nav
       :class="{ 'show-menu': isMenuOpen || isCursorOverMenu }"
@@ -42,9 +42,10 @@ export default {
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
+      this.isCursorOverMenu = this.isMenuOpen;
     },
     menuClick() {
-      this.isCursorOverMenu = true; // Prevent the click event from reaching document click listener
+      this.isCursorOverMenu = true;
     },
   },
   mounted() {
@@ -55,7 +56,6 @@ export default {
   },
   closeMenuOnClick() {
     if (!this.isCursorOverMenu) {
-      // Close only if not over the menu
       this.isMenuOpen = false;
     }
   },
@@ -74,20 +74,20 @@ const useStore = useUserStore();
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: white;
-  background-color: #2c3e50;
+  /*background-color: #2c3e50;*/
 }
 
 .header {
   padding: 20px;
   padding-left: -20px;
   display: flex;
-  background-color: #2c3e50;
+  /*background-color: #2c3e50;*/
 }
 
 .app-name {
   margin-top: -10px;
   margin-right: 20px;
-  color: red;
+  color: #df0000;
 }
 
 nav {
@@ -117,7 +117,7 @@ nav a.router-link-exact-active {
   color: rgb(255, 0, 0);
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 740px) {
   .header {
     flex-direction: column;
     align-items: center;
@@ -149,7 +149,7 @@ nav a.router-link-exact-active {
     top: 49px;
     right: 1em;
     z-index: 1;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -165,6 +165,18 @@ nav a.router-link-exact-active {
 
   .show-menu nav a.router-link-exact-active {
     color: rgb(255, 0, 0);
+  }
+
+  .menu-toggle .bar1 {
+    transform: rotate(-45deg) translateY(12px);
+  }
+
+  .menu-toggle .bar2 {
+    opacity: 0;
+  }
+
+  .menu-toggle .bar3 {
+    transform: rotate(45deg) translateY(-12px);
   }
 }
 </style>
