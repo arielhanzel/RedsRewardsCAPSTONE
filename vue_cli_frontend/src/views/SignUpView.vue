@@ -17,6 +17,12 @@
         >
           Sign Up
         </button>
+        <span>
+          <br />
+          <br />
+          Already have an account? Sign in
+          <router-link to="/login">here</router-link>.
+        </span>
       </form>
     </div>
   </div>
