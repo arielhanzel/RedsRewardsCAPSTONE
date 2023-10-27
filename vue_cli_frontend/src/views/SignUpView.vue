@@ -11,12 +11,7 @@
           v-model="password"
           required
         />
-        <button
-          @click="useStore.signup(username, email, password)"
-          type="submit"
-        >
-          Sign Up
-        </button>
+        <button type="submit">Sign Up</button>
         <span>
           <br />
           <br />
@@ -93,10 +88,53 @@ button[type="submit"]:hover {
 }
 </style>
 
-<script setup>
+<script>
+import axios from "axios";
+import router from "../router";
 import { useUserStore } from "@/store";
-const useStore = useUserStore();
-const username = "";
-const email = "";
-const password = "";
+
+export default {
+  data() {
+    return {
+      username: "",
+      email: "",
+      password: "",
+    };
+  },
+  methods: {
+    async signup() {
+      const useStore = useUserStore();
+      useStore.signup(this.username, this.email, this.password);
+      if (useStore.check) {
+        try {
+          // Calling the backend
+          const response = await axios.post(
+            "http://localhost:8000/auth/register",
+            {
+              username: this.username,
+              password: this.password,
+              email: this.email,
+            }
+          );
+
+          if (response.data) {
+            // Assuming the server returns a token on successful login
+            alert("Sign up successful! you have to log in to generate token");
+            // Optionally, you can store the token in localStorage or Vuex store, etc.
+            // localStorage.setItem('token', response.data.token);
+
+            router.push("/login");
+          } else {
+            alert("Invalid username or password");
+          }
+        } catch (error) {
+          // Handle error scenarios here
+          alert("Failed to login. Please try again later.");
+          alert(error);
+          console.error("Error logging in:", error);
+        }
+      }
+    },
+  },
+};
 </script>

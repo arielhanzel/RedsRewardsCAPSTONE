@@ -10,9 +10,7 @@
           v-model="password"
           required
         />
-        <button type="submit" @click="useStore.login(username, password)">
-          Log In
-        </button>
+        <button type="submit">Log In</button>
         <span>
           <br />
           <br />
@@ -88,9 +86,45 @@ button[type="submit"]:hover {
 }
 </style>
 
-<script setup>
+<script>
+import axios from "axios";
 import { useUserStore } from "@/store";
-const useStore = useUserStore();
-const username = "";
-const password = "";
+
+export default {
+  data() {
+    return {
+      username: "",
+      password: "",
+    };
+  },
+  methods: {
+    async login() {
+      try {
+        // Calling the backend
+        const response = await axios.post("http://localhost:8000/auth/login", {
+          username: this.username,
+          password: this.password,
+        });
+
+        if (response.data.jwt) {
+          // Assuming the server returns a token on successful login
+          alert("Login successful!");
+          // Optionally, you can store the token in localStorage or Vuex store, etc.
+          // localStorage.setItem('token', response.data.token);
+
+          const store = useUserStore();
+          store.login(response.data.user.username);
+          store.setToken(response.data.jwt);
+        } else {
+          alert("Invalid username or password");
+        }
+      } catch (error) {
+        // Handle error scenarios here
+        alert("Failed to login. Please try again later.");
+        alert(error);
+        console.error("Error logging in:", error);
+      }
+    },
+  },
+};
 </script>

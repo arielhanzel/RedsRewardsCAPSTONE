@@ -9,6 +9,9 @@ export const useUserStore = defineStore("user", {
     points: 220,
     pointsNeeded: 1000,
     loggedIn: false,
+    token: null,
+    check: false,
+    responseData: null,
   }),
   getters: {
     progressPercentage() {
@@ -19,7 +22,7 @@ export const useUserStore = defineStore("user", {
     },
   },
   actions: {
-    async login(username, password) {
+    async login(username) {
       // Call an authentication service to log in the user (e.g., Firebase Authentication).
       // Replace this with your actual authentication logic.
       // const user = await authService.login(email, password);
@@ -27,17 +30,13 @@ export const useUserStore = defineStore("user", {
         alert("Already logged in");
         router.push("/");
       } else {
-        if (password === "password" && username === "username") {
-          const user = username;
-          // Update the user in the store state.
-          this.user = user;
-          this.points = 780;
-          this.loggedIn = true;
-          router.push("/");
-          alert("Successfully logged in");
-        } else {
-          alert("Wrong username or password");
-        }
+        const user = username;
+        // Update the user in the store state.
+        this.user = user;
+        this.points = 780;
+        this.loggedIn = true;
+        router.push("/");
+        alert("Directing to home Page");
       }
     },
     logout() {
@@ -50,15 +49,25 @@ export const useUserStore = defineStore("user", {
         if (emailPattern.test(email)) {
           this.user = username;
           this.email = email;
-          this.password = password;
-          this.loggedIn = true;
-          router.push("/");
+          this.check = true;
         } else {
           alert("Invalid email address");
         }
       } else {
         alert("Please fill out all fields");
       }
+    },
+    setToken(jwt) {
+      this.token = jwt;
+    },
+    getToken() {
+      return this.token;
+    },
+    setResponseData(responseData) {
+      this.responseData = responseData;
+    },
+    getResponseData() {
+      return this.responseData;
     },
     // Define actions here
   },

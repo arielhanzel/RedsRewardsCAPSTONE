@@ -28,8 +28,13 @@ public class ApplicationUser implements UserDetails{
 	@Column(unique=true)
     private String username;
     private String password;
+	@Column(unique=true)
+	private String email;
 
-    @ManyToMany(fetch=FetchType.EAGER)
+
+
+
+	@ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
         name="user_role_junction",
         joinColumns = {@JoinColumn(name="user_id")},
@@ -43,12 +48,14 @@ public class ApplicationUser implements UserDetails{
 	}
 	
 
-	public ApplicationUser(Integer userId, String username, String password, Set<Role> authorities) {
+	public ApplicationUser(Integer userId, String username, String password, Set<Role> authorities, String email) {
 		super();
 		this.userId = userId;
 		this.username = username;
 		this.password = password;
 		this.authorities = authorities;
+		this.email = email;
+
 	}
 
     public Integer getUserId() {
@@ -87,6 +94,15 @@ public class ApplicationUser implements UserDetails{
 	
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 	/* If you want account locking capabilities create variables and ways to set them for the methods below */
