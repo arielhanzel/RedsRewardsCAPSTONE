@@ -11,9 +11,30 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @GetMapping("/")
-    public String helloUserController(){
+    public String userPage(){
         return "Hi user, you cannot alter database, sorry for that!";
     }
+
+    @GetMapping("/checkin")
+    public String checkin(){
+        return "ok";
+    }
     
+    @GetMapping("/fitnessclass")
+    public String attendence(){
+        return "ok";
+    }
+
+    @GetMapping("/rewardpoint")
+    public String rewardpoint(){
+        return "ok";
+    }
+
+    @GetMapping("/rewardredemption")
+    public String rewardredemption(){
+        return "ok";
+    }
+
+
 }
 
