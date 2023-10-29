@@ -12,7 +12,7 @@ public class UserController {
 
     @GetMapping("/")
     public String userPage(){
-        return "Hi user, you cannot alter database, sorry for that!";
+        return "User information";
     }
 
     @GetMapping("/checkin")
