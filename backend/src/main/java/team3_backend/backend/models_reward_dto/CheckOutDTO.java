@@ -10,7 +10,9 @@ public class CheckOutDTO {
     private LocalDateTime timestamp;
 
     // Default constructor
-    public CheckOutDTO() {}
+    public CheckOutDTO() {
+        super();
+    }
 
     // Parameterized constructor
     public CheckOutDTO(Integer checkoutId, String username, String email, LocalDateTime timestamp) {

@@ -8,16 +8,19 @@ public class CheckInDTO {
     private String username;
     private String email;
     private LocalDateTime timestamp;
+    private Integer userId;
+    
 
     public CheckInDTO() {
         super();
     }
 
-    public CheckInDTO(Integer checkinId, String username, String email, LocalDateTime timestamp) {
+    public CheckInDTO(Integer checkinId, Integer userId, String username, String email, LocalDateTime timestamp) {
         this.checkinId = checkinId;
         this.username = username;
         this.email = email;
         this.timestamp = timestamp;
+        this.userId= userId;
     }
 
     public Integer getCheckinId() {
@@ -26,6 +29,14 @@ public class CheckInDTO {
 
     public void setCheckinId(Integer checkinId) {
         this.checkinId = checkinId;
+    }
+
+     public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {

@@ -1,6 +1,7 @@
 package team3_backend.backend.models_reward;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,22 +36,6 @@ public class CheckIn {
         this.checkinId = checkinId;
     }
 
-    public String getUsernameFromCheckIn() {
-        if (this.applicationUser != null) {
-            return this.applicationUser.getUsername();
-        } else {
-            return null; // or throw an exception or handle this case as you see fit
-        }
-    }
-
-    public String getEmailFromCheckIn() {
-        if (this.applicationUser != null) {
-            return this.applicationUser.getEmail();
-        } else {
-            return null; // or throw an exception or handle this case as you see fit
-        }
-    }
-
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
@@ -58,6 +43,12 @@ public class CheckIn {
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
-    
+    public void setApplicationUser(ApplicationUser applicationUser) {
+        this.applicationUser = applicationUser;
+    }
+
+    public ApplicationUser getApplicationUser() {
+        return this.applicationUser;
+    }
     // getters, setters, and other methods
 }
