@@ -68,6 +68,7 @@ export default {
   },
   closeMenuOnClick() {
     if (!this.isCursorOverMenu) {
+      // Close only if not over the menu
       this.isMenuOpen = false;
     }
   },
