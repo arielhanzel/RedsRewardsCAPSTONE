@@ -5,7 +5,7 @@
     </router-link>
     <div
       class="menu-toggle"
-      @click="toggleMenu"
+      @click="toggleMenu($event)"
       @mouseenter="isCursorOverMenu = true"
       @mouseleave="isCursorOverMenu = false"
     >
@@ -17,7 +17,7 @@
       :class="{ 'show-menu': isMenuOpen || isCursorOverMenu }"
       @mouseenter="isCursorOverMenu = true"
       @mouseleave="isCursorOverMenu = false"
-      @click="isCursorOverMenu = false"
+      @click="toggleMenu(false)"
     >
       <router-link to="/">Home</router-link>
       <router-link to="/about">About</router-link>
@@ -40,22 +40,35 @@ export default {
     };
   },
   methods: {
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
+    toggleMenu(event, state = null) {
+      if (event) {
+        event.stopPropagation(); // Prevent the event from propagating up to the parent
+      }
+      if (state === null) {
+        this.isMenuOpen = !this.isMenuOpen;
+      } else {
+        this.isMenuOpen = state;
+      }
       this.isCursorOverMenu = this.isMenuOpen;
     },
-    menuClick() {
-      this.isCursorOverMenu = true;
+
+    handleBodyClick(event) {
+      if (!this.$el.contains(event.target) && this.isMenuOpen) {
+        this.toggleMenu(null, false);
+      }
     },
   },
   mounted() {
+    document.addEventListener("click", this.handleBodyClick);
     document.addEventListener("click", this.closeMenuOnClick);
   },
   beforeUnmount() {
+    document.removeEventListener("click", this.handleBodyClick);
     document.removeEventListener("click", this.closeMenuOnClick);
   },
   closeMenuOnClick() {
     if (!this.isCursorOverMenu) {
+      // Close only if not over the menu
       this.isMenuOpen = false;
     }
   },

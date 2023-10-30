@@ -8,7 +8,7 @@
 		<version>3.0.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.unkownkoder</groupId>
+	<groupId>Team3_Backend</groupId>
 	<artifactId>AuthenticatedBackend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>AuthenticatedBackend</name>
