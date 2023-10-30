@@ -24,6 +24,14 @@
   </div>
 </template>
 
+<script>
+export default {
+  mounted() {
+    document.title = "Red's Rewards - Login";
+  },
+};
+</script>
+
 <style>
 .login {
   display: flex;

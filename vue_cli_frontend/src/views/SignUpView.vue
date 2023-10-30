@@ -28,6 +28,14 @@
   </div>
 </template>
 
+<script>
+export default {
+  mounted() {
+    document.title = "Red's Rewards - Sign Up";
+  },
+};
+</script>
+
 <style>
 .signup {
   display: flex;

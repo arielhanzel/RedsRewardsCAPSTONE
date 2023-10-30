@@ -14,5 +14,8 @@ export default {
   components: {
     HelloWorld,
   },
+  mounted() {
+    document.title = "Red's Rewards";
+  },
 };
 </script>
