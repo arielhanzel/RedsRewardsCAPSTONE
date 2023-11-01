@@ -4,12 +4,28 @@
     <div class="login-container">
       <form @submit.prevent="login" class="login-form">
         <input type="text" placeholder="username" v-model="username" required />
-        <input
-          type="password"
-          placeholder="password"
-          v-model="password"
-          required
-        />
+        <div class="password-container">
+          <input
+            :type="passwordType"
+            placeholder="password"
+            v-model="password"
+            required
+          />
+          <span @click="togglePasswordVisibility">
+            <img
+              v-if="passwordType === 'password'"
+              src="@/assets/showPW.svg"
+              alt="Show Password"
+              class="toggle-icon"
+            />
+            <img
+              v-else
+              src="@/assets/hidePW.svg"
+              alt="Hide Password"
+              class="toggle-icon"
+            />
+          </span>
+        </div>
         <button type="submit" @click="useStore.login(username, password)">
           Log In
         </button>
@@ -94,11 +110,32 @@ button[type="submit"]:hover {
   color: red;
   background-color: white;
 }
+
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
 </style>
 
 <script setup>
+import { ref } from "vue";
 import { useUserStore } from "@/store";
 const useStore = useUserStore();
 const username = "";
 const password = "";
+const passwordType = ref("password");
+
+function togglePasswordVisibility() {
+  passwordType.value = passwordType.value === "password" ? "text" : "password";
+}
 </script>
