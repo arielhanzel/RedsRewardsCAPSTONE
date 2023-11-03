@@ -50,7 +50,7 @@ export const useUserStore = defineStore("user", {
       };
 
       axios
-        .post("http://192.168.0.165:8000/auth/login", userData)
+        .post("http://localhost:8000/auth/login", userData)
         .then((response) => {
           if (response.data.user != null) {
             this.token = response.data.jwt;
@@ -67,7 +67,7 @@ export const useUserStore = defineStore("user", {
         })
         .catch((error) => {
           console.error("Error loggin in user:", error);
-          alert("Error", error);
+          alert(`${error}`);
         });
     },
     logout() {
@@ -92,14 +92,14 @@ export const useUserStore = defineStore("user", {
           // this.loggedIn = true;
           // router.push("/");
           axios
-            .post("http://192.168.0.165:8000/auth/register", userData)
+            .post("http://localhost:8000/auth/register", userData)
             .then((response) => {
               console.log("User registered:", response.data);
               this.login(username, password);
             })
             .catch((error) => {
               console.error("Error loggin in user:", error);
-              alert("Error", error);
+              alert(`${error}`);
             });
         } else {
           alert("Invalid email address");
