@@ -3,6 +3,7 @@ import HomeView from "../views/HomeView.vue";
 import AboutView from "../views/AboutView.vue";
 import LoginView from "../views/LoginView.vue";
 import SignUpView from "../views/SignUpView.vue";
+import RedeemView from "../views/RedeemView.vue";
 import { useUserStore } from "@/store";
 
 const routes = [
@@ -28,6 +29,12 @@ const routes = [
     name: "signup",
     component: SignUpView,
   },
+  {
+    path: "/redeem",
+    name: "redeem",
+    component: RedeemView,
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = createRouter({
@@ -38,7 +45,7 @@ const router = createRouter({
 router.beforeEach((to) => {
   const useStore = useUserStore();
   if (to.meta.requiresAuth) {
-    if (!useStore.loggedIn) {
+    if (!(useStore.token && useStore.token != "null")) {
       alert("Please log in");
       return {
         path: "/login",
