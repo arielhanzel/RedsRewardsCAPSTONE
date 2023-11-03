@@ -41,7 +41,7 @@
   font-size: 3rem;
   margin-bottom: 1rem;
   color: rgb(255, 0, 0);
-  margin-bottom: -50px;
+  margin-bottom: -40px;
 }
 
 .signup-container {
