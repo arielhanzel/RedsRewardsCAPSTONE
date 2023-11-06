@@ -3,7 +3,7 @@
     <!-- Use store variables -->
     <p v-if="user">User: {{ user }}</p>
     <p v-if="email">Email: {{ email }}</p>
-    <p v-if="token">Email: {{ token }}</p>
+    <p v-if="token">Token: {{ token }}</p>
     <!-- ... and so on -->
 
     <img alt="Reward logo" src="../assets/reward.png" />

@@ -8,16 +8,20 @@ public class ApplicationUserDTO {
     private String username;
     private String email;
     private Set<String> roles;  // assuming the Role has a String representation (like role name)
+    private String classType;
+
+    
 
     public ApplicationUserDTO() {
         // default constructor
     }
 
-    public ApplicationUserDTO(Integer userId, String username, String email, Set<String> roles) {
+    public ApplicationUserDTO(Integer userId, String username, String email, Set<String> roles, String classType) {
         this.userId = userId;
         this.username = username;
         this.email = email;
         this.roles = roles;
+        this.classType = classType;
     }
 
     // getters and setters
@@ -51,6 +55,14 @@ public class ApplicationUserDTO {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public String getClassType() {
+        return classType;
+    }
+
+    public void setClassType(String classType) {
+        this.classType = classType;
     }
 
     // You can also override the toString(), equals(), and hashCode() methods if needed.

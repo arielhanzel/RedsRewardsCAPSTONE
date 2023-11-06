@@ -5,18 +5,20 @@ import java.time.LocalDateTime;
 public class CheckOutDTO {
 
     private Integer checkoutId;
+    private Integer userId;
+
     private String username;
     private String email;
     private LocalDateTime timestamp;
-
     // Default constructor
     public CheckOutDTO() {
         super();
     }
 
     // Parameterized constructor
-    public CheckOutDTO(Integer checkoutId, String username, String email, LocalDateTime timestamp) {
+    public CheckOutDTO(Integer checkoutId, Integer userId, String username, String email, LocalDateTime timestamp) {
         this.checkoutId = checkoutId;
+        this.userId = userId;
         this.username = username;
         this.email = email;
         this.timestamp = timestamp;
@@ -30,6 +32,14 @@ public class CheckOutDTO {
 
     public void setCheckoutId(Integer checkoutId) {
         this.checkoutId = checkoutId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {

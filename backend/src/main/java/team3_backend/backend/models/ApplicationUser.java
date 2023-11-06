@@ -2,6 +2,7 @@ package team3_backend.backend.models;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -16,7 +17,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import team3_backend.backend.models_reward.FitnessClass;
 
 @Entity
 @Table(name="users")
@@ -27,11 +30,13 @@ public class ApplicationUser implements UserDetails{
     private Integer userId;
 	@Column(unique=true)
     private String username;
-    private String password;
+    private String password;  
 	@Column(unique=true)
 	private String email;
-
-
+	
+	@ManyToOne
+    @JoinColumn(name = "classId", nullable = true)
+    private FitnessClass fitnessClass;
 
 
 	@ManyToMany(fetch=FetchType.EAGER)
@@ -55,7 +60,6 @@ public class ApplicationUser implements UserDetails{
 		this.password = password;
 		this.authorities = authorities;
 		this.email = email;
-
 	}
 
     public Integer getUserId() {
@@ -103,6 +107,15 @@ public class ApplicationUser implements UserDetails{
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public FitnessClass getFitnessClass() {
+		return fitnessClass;
+	}
+
+
+	public void setFitnessClass(FitnessClass fitnessClass) {
+		this.fitnessClass = fitnessClass;
 	}
 	
 	/* If you want account locking capabilities create variables and ways to set them for the methods below */

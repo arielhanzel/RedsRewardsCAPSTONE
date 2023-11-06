@@ -1,5 +1,6 @@
 package team3_backend.backend.models_reward;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import jakarta.persistence.Column;
@@ -23,6 +24,8 @@ public class FitnessClass {
     @Column(nullable = false)
     private LocalTime time;
 
+    
+
     public Integer getClassId() {
         return classId;
     }
@@ -41,6 +44,10 @@ public class FitnessClass {
 
     public LocalTime getTime() {
         return time;
+    }
+
+    public void setTime(LocalTime localTime) {
+        this.time = localTime;
     }
 
     

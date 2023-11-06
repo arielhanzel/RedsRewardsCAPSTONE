@@ -17,10 +17,10 @@ public class CheckInDTO {
 
     public CheckInDTO(Integer checkinId, Integer userId, String username, String email, LocalDateTime timestamp) {
         this.checkinId = checkinId;
+        this.userId= userId;
         this.username = username;
         this.email = email;
-        this.timestamp = timestamp;
-        this.userId= userId;
+        this.timestamp = timestamp;  
     }
 
     public Integer getCheckinId() {

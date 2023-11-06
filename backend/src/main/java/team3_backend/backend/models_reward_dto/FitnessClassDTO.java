@@ -40,5 +40,7 @@ public class FitnessClassDTO {
         this.time = time;
     }
 
+    
+
     // You can also override the toString(), equals(), and hashCode() methods if needed.
 }

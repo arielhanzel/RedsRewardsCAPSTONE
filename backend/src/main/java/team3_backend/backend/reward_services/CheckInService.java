@@ -25,19 +25,13 @@ public class CheckInService {
     private UserRepository userRepository;
 
 
-    // Convert CheckIn entity to CheckInDTO
-    private CheckInDTO convertToDTO(CheckIn checkIn, String username, String email) {
-        return new CheckInDTO(
-            checkIn.getCheckinId(),
-            null, username, email, checkIn.getTimestamp()
-        );
-    }
 
     //// Convert CheckIn entity list to CheckInDTO
     private CheckInDTO convertToDTO(CheckIn checkIn) {
+        ApplicationUser user = checkIn.getApplicationUser();
         return new CheckInDTO(
             checkIn.getCheckinId(),
-            null, null, null, checkIn.getTimestamp()
+            user.getUserId(),user.getUsername(),user.getEmail(), checkIn.getTimestamp()
         );
     }
 
@@ -47,24 +41,33 @@ public class CheckInService {
         CheckIn checkIn = new CheckIn(); 
         checkIn.setTimestamp(LocalDateTime.now());
 
-        Optional<ApplicationUser> user = userRepository.findByUsername(username);
+        Optional<ApplicationUser> user = userRepository.findByUsernameAndEmail(username,email);
         if (user.isPresent()) {
         checkIn.setApplicationUser(user.get());
 }
 
         CheckIn savedCheckIn = checkInRepository.save(checkIn);
         
-        return convertToDTO(savedCheckIn, username, email);
+        return convertToDTO(savedCheckIn);
     }
 
     
 
     // Get all check-ins for a specific user
-    public List<CheckInDTO> getAllCheckInsForUser(ApplicationUser user) {
+    public List<CheckInDTO> getAllCheckInsForUser(String username, String email) {
+        ApplicationUser user = userRepository.findByUsernameAndEmail(username, email).get();
         List<CheckIn> checkIns = checkInRepository.findByApplicationUser(user);
         return checkIns.stream()
                        .map(this::convertToDTO)
                        .collect(Collectors.toList());
+    }
+
+    //Get all CheckIn records
+    public List<CheckInDTO> getAllCheckIns() {
+        List<CheckIn> checkIns = checkInRepository.findAll(); // Get all CheckIn records from repository
+        return checkIns.stream()
+                       .map(this::convertToDTO) // Convert each CheckIn entity to a CheckInDTO
+                       .collect(Collectors.toList()); // Collect the result into a List
     }
 
     // Other service methods can be added as required, such as delete, update, etc.
