@@ -1,6 +1,5 @@
 package team3_backend.backend.models_reward_dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class RewardRedemptionDTO {
@@ -8,16 +7,16 @@ public class RewardRedemptionDTO {
     private Integer purchaseId;
     private String username; // Assuming ApplicationUser has a getUsername() method
     private String items;
-    private BigDecimal amount;
+    private Integer point;
     private LocalDateTime timestamp;
 
     public RewardRedemptionDTO() {}
 
-    public RewardRedemptionDTO(Integer purchaseId, String username, String items, BigDecimal amount, LocalDateTime timestamp) {
+    public RewardRedemptionDTO(Integer purchaseId, String username, String items, Integer point, LocalDateTime timestamp) {
         this.purchaseId = purchaseId;
         this.username = username;
         this.items = items;
-        this.amount = amount;
+        this.point = point;
         this.timestamp = timestamp;
     }
 
@@ -45,12 +44,12 @@ public class RewardRedemptionDTO {
         this.items = items;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public Integer getPoint() {
+        return point;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setPoint(Integer point) {
+        this.point = point;
     }
 
     public LocalDateTime getTimestamp() {

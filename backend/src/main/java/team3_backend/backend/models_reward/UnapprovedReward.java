@@ -1,6 +1,5 @@
 package team3_backend.backend.models_reward;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -12,34 +11,31 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import team3_backend.backend.models.ApplicationUser;
-
+  
 @Entity
-@Table(name = "RewardRedemptions")
-public class RewardRedemption {
+@Table(name = "UnapprovedRewards")
+public class UnapprovedReward {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer purchaseId;
+    private Integer pointId;
     
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private ApplicationUser applicationUser;
     
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String items;
-    
-    @Column(nullable = false)
-    private Integer point;
-
     @Column(nullable = false)
     private LocalDateTime timestamp;
+    
+    @Column(nullable = false)
+    private Integer pointBalance;
 
-    public Integer getPurchaseId() {
-        return purchaseId;
+    public Integer getPointId() {
+        return pointId;
     }
 
-    public void setPurchaseId(Integer purchaseId) {
-        this.purchaseId = purchaseId;
+    public void setPointId(Integer pointId) {
+        this.pointId = pointId;
     }
 
     public ApplicationUser getApplicationUser() {
@@ -50,22 +46,6 @@ public class RewardRedemption {
         this.applicationUser = applicationUser;
     }
 
-    public String getItems() {
-        return items;
-    }
-
-    public void setItems(String items) {
-        this.items = items;
-    }
-
-    public Integer getPoint() {
-        return point;
-    }
-
-    public void setPoint(Integer point) {
-        this.point = point;
-    }
-
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
@@ -74,7 +54,13 @@ public class RewardRedemption {
         this.timestamp = timestamp;
     }
 
+    public Integer getPointBalance() {
+        return pointBalance;
+    }
 
+    public void setPointBalance(Integer pointBalance) {
+        this.pointBalance = pointBalance;
+    }
     
     // getters, setters, and other methods
 }

@@ -95,6 +95,7 @@ public class SecurityConfiguration {
         return source;
     }
       */
+      
     @Bean
     public JwtDecoder jwtDecoder(){
         return NimbusJwtDecoder.withPublicKey(keys.getPublicKey()).build();

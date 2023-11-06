@@ -20,12 +20,14 @@ import team3_backend.backend.models_reward_dto.CheckInDTO;
 import team3_backend.backend.models_reward_dto.CheckOutDTO;
 import team3_backend.backend.models_reward_dto.ClassAttendanceDTO;
 import team3_backend.backend.models_reward_dto.FitnessClassDTO;
+import team3_backend.backend.models_reward_dto.ReferralDTO;
 import team3_backend.backend.repository.UserRepository;
 import team3_backend.backend.reward_repository.FitnessClassRepository;
 import team3_backend.backend.reward_services.CheckInService;
 import team3_backend.backend.reward_services.CheckOutService;
 import team3_backend.backend.reward_services.ClassAttendanceService;
 import team3_backend.backend.reward_services.FitnessClassService;
+import team3_backend.backend.reward_services.ReferralService;
 import team3_backend.backend.services.AuthenticationService;
 import team3_backend.backend.services.UserService;
 
@@ -54,6 +56,9 @@ public class AdminController {
 
     @Autowired
     private FitnessClassRepository fitnessClassRepository;
+
+    @Autowired
+    private ReferralService referralService;
     
 
     @PostMapping("/")
@@ -93,7 +98,12 @@ public class AdminController {
 
     @PostMapping("/registerclass")
     public ApplicationUserDTO registerClass(@RequestBody ApplicationUserDTO body){
-        return userService.registerClass(body);
+        ApplicationUserDTO savedApplicationUserDTO = userService.registerClass(body);
+        if(savedApplicationUserDTO != null){
+            //add reward points
+        }
+
+        return savedApplicationUserDTO;
         
     }
 
@@ -127,21 +137,59 @@ public class AdminController {
         return classAttendanceService.getAllAttendances();
     }
 
-    @GetMapping("/referral")
-    public String referral(){
+    @PostMapping("/referrer/view")
+    public ReferralDTO viewReferrer(@RequestBody ApplicationUserDTO body){
+        return referralService.viewReferrer(body.getUsername());
+    }
+
+    @PostMapping("/referree/view")
+    public List<ReferralDTO> viewReferree(@RequestBody ApplicationUserDTO body){
+        return referralService.viewReferree(body.getUsername());
+    }
+
+    @PostMapping("/referrel/view")
+    public List<ReferralDTO> viewReferrals(){
+        return referralService.viewReferrals();
+    }
+
+    @PostMapping("/unapprovedreward/view")
+    public String point1(){
         return "ok";
     }
 
-    
-    @GetMapping("/rewardpoint")
-    public String point(){
+    @PostMapping("/unapprovedreward/allview")
+    public String point3(){
         return "ok";
     }
 
-    @GetMapping("/rewardRedemption")
+     @PostMapping("/unapprovedreward/approve")
+    public String point2(){
+        return "ok";
+    }
+
+    @PostMapping("/rewardpoint/view")
+    public String point4(){
+        return "ok";
+    }
+
+    @PostMapping("/rewardpoint/allview")
+    public String point5(){
+        return "ok";
+    }
+
+    @PostMapping("/rewardredemption/view")
     public String rewardRedemption(){
         return "ok";
     }
 
+     @PostMapping("/rewardredemption/allview")
+    public String rewardRedemption1(){
+        return "ok";
+    }
+
+     @PostMapping("/rewardeedemption/redemption")
+    public String rewardRedemption2(){
+        return "ok";
+    }
     
 }
