@@ -9,11 +9,12 @@ public class ApplicationUserDTO {
     private String email;
     private Set<String> roles;  // assuming the Role has a String representation (like role name)
     private String classType;
+    private String registeredClass;
 
-    
 
     public ApplicationUserDTO() {
         // default constructor
+        super();
     }
 
     public ApplicationUserDTO(Integer userId, String username, String email, Set<String> roles, String classType) {
@@ -63,6 +64,14 @@ public class ApplicationUserDTO {
 
     public void setClassType(String classType) {
         this.classType = classType;
+    }
+
+    public String getRegisteredClass() {
+        return registeredClass;
+    }
+
+    public void setRegisteredClass(String registeredClass) {
+        this.registeredClass = registeredClass;
     }
 
     // You can also override the toString(), equals(), and hashCode() methods if needed.

@@ -21,6 +21,7 @@ import team3_backend.backend.models_reward_dto.CheckOutDTO;
 import team3_backend.backend.models_reward_dto.ClassAttendanceDTO;
 import team3_backend.backend.models_reward_dto.FitnessClassDTO;
 import team3_backend.backend.models_reward_dto.ReferralDTO;
+import team3_backend.backend.models_reward_dto.RewardPointDTO;
 import team3_backend.backend.repository.UserRepository;
 import team3_backend.backend.reward_repository.FitnessClassRepository;
 import team3_backend.backend.reward_services.CheckInService;
@@ -28,6 +29,7 @@ import team3_backend.backend.reward_services.CheckOutService;
 import team3_backend.backend.reward_services.ClassAttendanceService;
 import team3_backend.backend.reward_services.FitnessClassService;
 import team3_backend.backend.reward_services.ReferralService;
+import team3_backend.backend.reward_services.RewardPointService;
 import team3_backend.backend.services.AuthenticationService;
 import team3_backend.backend.services.UserService;
 
@@ -59,6 +61,9 @@ public class AdminController {
 
     @Autowired
     private ReferralService referralService;
+
+    @Autowired
+    private RewardPointService rewardPointService;
     
 
     @PostMapping("/")
@@ -99,12 +104,11 @@ public class AdminController {
     @PostMapping("/registerclass")
     public ApplicationUserDTO registerClass(@RequestBody ApplicationUserDTO body){
         ApplicationUserDTO savedApplicationUserDTO = userService.registerClass(body);
+        ApplicationUser applicationUser = userRepository.findById(savedApplicationUserDTO.getUserId()).get();
         if(savedApplicationUserDTO != null){
-            //add reward points
+            rewardPointService.addRewardPoints(applicationUser, 100);
         }
-
-        return savedApplicationUserDTO;
-        
+        return savedApplicationUserDTO;    
     }
 
     @PostMapping("/fitnessclass")
@@ -137,6 +141,11 @@ public class AdminController {
         return classAttendanceService.getAllAttendances();
     }
 
+    @PostMapping("/classattendance/addpoints")
+    public RewardPointDTO addPointsClassAttendance(@RequestBody ApplicationUserDTO body){
+        return rewardPointService.addPointsClassAttendance(body.getUserId());
+    }
+
     @PostMapping("/referrer/view")
     public ReferralDTO viewReferrer(@RequestBody ApplicationUserDTO body){
         return referralService.viewReferrer(body.getUsername());
@@ -150,6 +159,11 @@ public class AdminController {
     @PostMapping("/referrel/view")
     public List<ReferralDTO> viewReferrals(){
         return referralService.viewReferrals();
+    }
+
+    @PostMapping("/referrer/addPoints")
+    public RewardPointDTO addPointsReferrer(@RequestBody ApplicationUserDTO body){
+        return rewardPointService.addPointsReferrer(body.getUsername());
     }
 
     @PostMapping("/unapprovedreward/view")

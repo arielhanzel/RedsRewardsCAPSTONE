@@ -50,6 +50,7 @@ public class UserService implements UserDetailsService {
         }
 
         ApplicationUser user = userOptional.get();
+
         FitnessClass fitnessClass = fitnessClassOptional.get();
         
         user.setFitnessClass(fitnessClass);
@@ -70,7 +71,6 @@ public class UserService implements UserDetailsService {
                 null,
                 classType);
     }
-
     
 
 }

@@ -53,7 +53,7 @@ public class ApplicationUser implements UserDetails{
 	}
 	
 
-	public ApplicationUser(Integer userId, String username, String password, Set<Role> authorities, String email) {
+	public ApplicationUser(Integer userId, String username, String password, Set<Role> authorities, String email, String registeredClass) {
 		super();
 		this.userId = userId;
 		this.username = username;

@@ -7,6 +7,7 @@ import team3_backend.backend.models.ApplicationUser;
 import team3_backend.backend.models_reward.ClassAttendance;
 import team3_backend.backend.models_reward.FitnessClass;
 import team3_backend.backend.models_reward_dto.ClassAttendanceDTO;
+import team3_backend.backend.models_reward_dto.RewardPointDTO;
 import team3_backend.backend.reward_repository.ClassAttendanceRepository;
 
 import java.util.List;

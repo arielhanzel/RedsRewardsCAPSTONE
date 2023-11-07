@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import team3_backend.backend.models.ApplicationUser;
 import team3_backend.backend.models_reward.RewardPoint;
 import team3_backend.backend.models_reward_dto.RewardPointDTO;
+import team3_backend.backend.repository.UserRepository;
 import team3_backend.backend.reward_repository.RewardPointRepository;
 
 import java.time.LocalDateTime;
@@ -16,9 +17,11 @@ import java.util.stream.Collectors;
 public class RewardPointService {
 
     private final RewardPointRepository rewardPointRepository;
+    private final UserRepository userRepository;
 
-    public RewardPointService(RewardPointRepository rewardPointRepository) {
+    public RewardPointService(RewardPointRepository rewardPointRepository, UserRepository userRepository ) {
         this.rewardPointRepository = rewardPointRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -52,6 +55,16 @@ public class RewardPointService {
                 rewardPoint.getTimestamp(),
                 rewardPoint.getPointBalance()
         );
+    }
+
+    public RewardPointDTO addPointsClassAttendance(Integer userId) {
+        ApplicationUser applicationUser = userRepository.findById(userId).get();
+        return addRewardPoints(applicationUser, 10);
+    }
+
+    public RewardPointDTO addPointsReferrer(String username) {
+        ApplicationUser applicationUser = userRepository.findByUsername(username).get();
+        return addRewardPoints(applicationUser,100);
     }
     
     // Other service methods can be added here as needed

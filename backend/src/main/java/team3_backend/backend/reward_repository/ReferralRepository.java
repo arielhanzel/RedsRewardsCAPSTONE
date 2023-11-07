@@ -17,5 +17,6 @@ public interface ReferralRepository extends JpaRepository<Referral, Integer> {
     List<Referral> findByReferrer(ApplicationUser referrer);
 
     //to find a referrer for a specific referee
-    Optional<Referral> findByReferee(ApplicationUser referee);
+    List<Referral> findByReferee(ApplicationUser referee);
+
 }

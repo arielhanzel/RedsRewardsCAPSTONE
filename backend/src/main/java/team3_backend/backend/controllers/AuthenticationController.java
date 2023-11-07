@@ -39,9 +39,6 @@ public class AuthenticationController {
     private UserRepository userRepository;
 
     @Autowired
-    private RewardPointService rewardPointService;
-
-    @Autowired
     private UnapprovedRewardService unapprovedRewardService;
 
     @PostMapping("/register")
@@ -68,7 +65,7 @@ public class AuthenticationController {
                     ReferralDTO savedReferral = referralService.registerReferral(referrer.getUserId(), savedApplicationUser.getUserId());
 
                     // Now you can handle logic for admin or non-admin as you have it in your controller
-                    if (isAdmin) {
+                    /*if (isAdmin) {
                         // The user has the ROLE_ADMIN authority
 
                         if(savedReferral != null){
@@ -77,10 +74,11 @@ public class AuthenticationController {
                              rewardPointService.addRewardPoints(referrer, 100);
                          
                         }
-                    } 
+                    } */
+
                     if(isUser && !isAdmin)
                     {
-                        // The user does not have the ROLE_ADMIN authority
+                        // The user has Role_User Authority
 
                          if(savedReferral != null){
                             // add points to UnapprovedReward Entity of referral
