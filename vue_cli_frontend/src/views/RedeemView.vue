@@ -70,6 +70,9 @@ export default {
       ],
     };
   },
+  mounted() {
+    document.title = "Red's Rewards - Redeem";
+  },
 };
 </script>
 
