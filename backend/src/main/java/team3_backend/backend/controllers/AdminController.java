@@ -88,13 +88,41 @@ public class AdminController {
 
     // send means Json data need to be sent from frontend to following api
     //jwt Token should be included in header, look at interfaced sign up and login example
+
+    //response is data sent from backend to frontend aftermaking request
+
     
+
+
+
+
+
     //User look up via username
-    //send {"username":"Alex"} + jwt Token
+    //send {"username":"rajesh"} + jwt Token
+    /*response is ApplicationUserDTO in json format, eg. {
+                                                    "userId": 2,
+                                                    "username": "rajesh",
+                                                    "email": "rajesh@gmail.com",
+                                                    "roles": [
+                                                        {
+                                                            "roleId": 2,
+                                                            "authority": "User"
+                                                        }
+                                                    ],
+                                                    "classType": null,
+                                                    "registeredClass": "Yoga"
+                                                }
+    */
     @PostMapping("/user/view")
     public ApplicationUserDTO userView(@RequestBody ApplicationUserDTO body){
         return userService.userView(body.getUsername());
-    }
+    } 
+
+
+
+
+
+
 
     //View all users from database including admin
     //send jwt Token
@@ -103,6 +131,8 @@ public class AdminController {
         return userService.allUserView();
     }
 
+
+    
 
     /* Not Required to implement
     
@@ -242,6 +272,14 @@ public class AdminController {
     public List<RewardPointDTO> viewRewardPoint(@RequestBody ApplicationUserDTO body){
         ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return rewardPointService.getAllRewardPointsForUser(applicationUser);
+    }
+
+    //to view total points of user
+    //send {"username": "Alex"} + jwt Token
+    @PostMapping("/rewardpoint/totalpoints")
+    public Integer viewTotalPoints(@RequestBody ApplicationUserDTO body){
+        ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
+        return rewardPointService.getTotalRewardPointsForUser(applicationUser);
     }
 
     //to view approved reward point of all users from reward point database
