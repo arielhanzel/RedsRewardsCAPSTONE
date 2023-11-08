@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team3_backend.backend.models.ApplicationUser;
 import team3_backend.backend.models_reward.RewardPoint;
+import team3_backend.backend.models_reward.UnapprovedReward;
 import team3_backend.backend.models_reward_dto.RewardPointDTO;
+import team3_backend.backend.models_reward_dto.UnapprovedRewardDTO;
 import team3_backend.backend.repository.UserRepository;
 import team3_backend.backend.reward_repository.RewardPointRepository;
 
@@ -65,6 +67,13 @@ public class RewardPointService {
     public RewardPointDTO addPointsReferrer(String username) {
         ApplicationUser applicationUser = userRepository.findByUsername(username).get();
         return addRewardPoints(applicationUser,100);
+    }
+
+    public List<RewardPointDTO> getAllRewardPoints() {
+       List<RewardPoint> rewardPoints = rewardPointRepository.findAll();
+    return rewardPoints.stream()
+                        .map(this::convertToRewardPointDTO)
+                        .collect(Collectors.toList());
     }
     
     // Other service methods can be added here as needed

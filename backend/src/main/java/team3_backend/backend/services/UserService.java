@@ -38,15 +38,15 @@ public class UserService implements UserDetailsService {
     }
 
    
-    public ApplicationUserDTO registerClass(ApplicationUserDTO userDTO) {
-        Optional<ApplicationUser> userOptional = userRepository.findByUsernameAndEmail(userDTO.getUsername(), userDTO.getEmail());
-        Optional<FitnessClass> fitnessClassOptional = fitnessClassRepository.findByType(userDTO.getClassType());
+    public ApplicationUserDTO registerClass(String username, String classType) {
+        Optional<ApplicationUser> userOptional = userRepository.findByUsername(username);
+        Optional<FitnessClass> fitnessClassOptional = fitnessClassRepository.findByType(classType);
 
         if (!userOptional.isPresent()) {
-            throw new UsernameNotFoundException("User not found with username: " + userDTO.getUsername() + " and email: " + userDTO.getEmail());
+            throw new UsernameNotFoundException("User not found with username: " + username);
         }
         if (!fitnessClassOptional.isPresent()) {
-            throw new IllegalStateException("Fitness class not found with type: " + userDTO.getClassType());
+            throw new IllegalStateException("Fitness class not found with type: " + classType);
         }
 
         ApplicationUser user = userOptional.get();
@@ -68,6 +68,7 @@ public class UserService implements UserDetailsService {
                 user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
+                null,
                 null,
                 classType);
     }

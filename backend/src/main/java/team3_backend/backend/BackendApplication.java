@@ -32,7 +32,7 @@ public class BackendApplication {
 			Set<Role> roles = new HashSet<>();
 			roles.add(adminRole);
 
-			ApplicationUser admin = new ApplicationUser(1, "admin", passwordEncode.encode("password"), roles, "admin@gmail.com");
+			ApplicationUser admin = new ApplicationUser(1, "admin", passwordEncode.encode("password"), roles, "admin@gmail.com", null);
 
 			userRepository.save(admin);
 		};

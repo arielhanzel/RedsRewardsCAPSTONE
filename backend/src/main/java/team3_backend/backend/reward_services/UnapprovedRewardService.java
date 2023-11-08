@@ -41,9 +41,6 @@ public class UnapprovedRewardService {
     }
 
     // This method could be used later to approve unapproved rewards
-    public void approveReward(int rewardId) {
-        // Implementation of reward approval logic goes here
-    }
 
     private UnapprovedRewardDTO convertToUnapprovedRewardDTO(UnapprovedReward unapprovedReward) {
         return new UnapprovedRewardDTO(
@@ -53,6 +50,14 @@ public class UnapprovedRewardService {
                 unapprovedReward.getPointBalance()
         );
     }
-    
+
+   
+    public List<UnapprovedRewardDTO> getAllUnapprovedRewards() {
+       List<UnapprovedReward> unapprovedRewards = unapprovedRewardRepository.findAll();
+    return unapprovedRewards.stream()
+                            .map(this::convertToUnapprovedRewardDTO)
+                            .collect(Collectors.toList());
+    }
+
     // Other service methods can be added here as needed
 }

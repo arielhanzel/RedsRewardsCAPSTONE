@@ -17,12 +17,13 @@ public class ApplicationUserDTO {
         super();
     }
 
-    public ApplicationUserDTO(Integer userId, String username, String email, Set<String> roles, String classType) {
+    public ApplicationUserDTO(Integer userId, String username, String email, Set<String> roles, String classType, String registeredClass) {
         this.userId = userId;
         this.username = username;
         this.email = email;
         this.roles = roles;
         this.classType = classType;
+        this.registeredClass = registeredClass;
     }
 
     // getters and setters

@@ -44,11 +44,11 @@ public class ReferralService {
     }
 
     public ReferralDTO viewReferrer(String username) {
-        ApplicationUser referrer = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Referrer not found"));
+        ApplicationUser referee = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Referrer not found1"));
 
         // Assuming that there's a method to find referrals by the referrer in the ReferralRepository
-        List<Referral> referrals = referralRepository.findByReferrer(referrer);
+        List<Referral> referrals = referralRepository.findByReferee(referee);
         // This will return the latest referral made by the referrer
         return referrals.stream()
                 .map(this::convertToDTO)
@@ -57,10 +57,10 @@ public class ReferralService {
     }
 
     public List<ReferralDTO> viewReferree(String username) {
-        ApplicationUser referee = userRepository.findByUsername(username)
+        ApplicationUser referrer = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Referee not found"));
 
-        List<Referral> referrals = referralRepository.findByReferee(referee);
+        List<Referral> referrals = referralRepository.findByReferrer(referrer);
         return referrals.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());

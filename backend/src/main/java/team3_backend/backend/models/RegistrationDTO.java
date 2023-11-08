@@ -4,18 +4,18 @@ public class RegistrationDTO {
     private String username;
     private String password;
     private String email;
-    private String referral;
+    private String referrer;
 
     public RegistrationDTO(){
         super();
     }
 
-    public RegistrationDTO(String username, String password, String email, String referral){
+    public RegistrationDTO(String username, String password, String email, String referrer){
         super();
         this.username = username;
         this.password = password;
         this.email = email;
-        this.referral = referral;
+        this.referrer = referrer;
     }
 
     public String getUsername(){
@@ -42,12 +42,12 @@ public class RegistrationDTO {
         this.email = email;
     }
 
-    public String getReferral() {
-        return referral;
+    public String getReferrer() {
+        return referrer;
     }
 
-    public void setReferral(String referral) {
-        this.referral = referral;
+    public void setReferrer(String referrer) {
+        this.referrer = referrer;
     }
 
     public String toString(){

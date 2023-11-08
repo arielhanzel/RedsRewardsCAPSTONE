@@ -46,18 +46,11 @@ public class AuthenticationController {
         ApplicationUser savedApplicationUser = authenticationService.registerUser(body.getUsername(), body.getPassword(), body.getEmail());
 
        if(savedApplicationUser != null){    
-            //retriving and comparing role for admin role
-            Collection<? extends GrantedAuthority> authorities = savedApplicationUser.getAuthorities();
-            boolean isAdmin = authorities.stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
             
-            boolean isUser = authorities.stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_USER"));
-
             // Create a referral if a username is provided in the 'referral' field of RegistrationDTO
-            if(body.getReferral() != null && !body.getReferral().isEmpty()){
+            if(body.getReferrer() != null && !body.getReferrer().isEmpty()){
                 // Retrieve the referring user (referrer) by username
-                ApplicationUser referrer = userRepository.findByUsername(body.getReferral())
+                ApplicationUser referrer = userRepository.findByUsername(body.getReferrer())
                         .orElse(null);
 
                 if(referrer != null){
@@ -76,15 +69,14 @@ public class AuthenticationController {
                         }
                     } */
 
-                    if(isUser && !isAdmin)
-                    {
+                    
                         // The user has Role_User Authority
 
                          if(savedReferral != null){
                             // add points to UnapprovedReward Entity of referral
                             unapprovedRewardService.addUnapprovedReward(referrer, 100);
                         }
-                    }
+                    
                 }
             }
         }
