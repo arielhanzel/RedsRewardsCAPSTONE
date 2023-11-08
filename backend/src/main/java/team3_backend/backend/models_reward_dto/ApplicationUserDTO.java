@@ -1,13 +1,16 @@
 package team3_backend.backend.models_reward_dto;
 
+import java.util.Collection;
 import java.util.Set;
+
+import org.springframework.security.core.GrantedAuthority;
 
 public class ApplicationUserDTO {
 
     private Integer userId;
     private String username;
     private String email;
-    private Set<String> roles;  // assuming the Role has a String representation (like role name)
+    Collection<? extends GrantedAuthority> roles;  // assuming the Role has a String representation (like role name)
     private String classType;
     private String registeredClass;
 
@@ -17,7 +20,7 @@ public class ApplicationUserDTO {
         super();
     }
 
-    public ApplicationUserDTO(Integer userId, String username, String email, Set<String> roles, String classType, String registeredClass) {
+    public ApplicationUserDTO(Integer userId, String username, String email, Collection<? extends GrantedAuthority> roles, String classType, String registeredClass) {
         this.userId = userId;
         this.username = username;
         this.email = email;
@@ -51,11 +54,11 @@ public class ApplicationUserDTO {
         this.email = email;
     }
 
-    public Set<String> getRoles() {
+    public Collection<? extends GrantedAuthority> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<String> roles) {
+    public void setRoles(Collection<? extends GrantedAuthority> roles) {
         this.roles = roles;
     }
 

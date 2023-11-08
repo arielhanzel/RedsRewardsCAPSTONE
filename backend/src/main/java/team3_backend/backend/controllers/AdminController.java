@@ -85,6 +85,27 @@ public class AdminController {
         return "Admin Information";   
     }
 
+
+    // send means Json data need to be sent from frontend to following api
+    //jwt Token should be included in header, look at interfaced sign up and login example
+    
+    //User look up via username
+    //send {"username":"Alex"} + jwt Token
+    @PostMapping("/user/view")
+    public ApplicationUserDTO userView(@RequestBody ApplicationUserDTO body){
+        return userService.userView(body.getUsername());
+    }
+
+    //View all users from database including admin
+    //send jwt Token
+    @PostMapping("/user/allview")
+    public List<ApplicationUserDTO> allUserView(){
+        return userService.allUserView();
+    }
+
+
+    /* Not Required to implement
+    
     @PostMapping("/checkin/create")
     public CheckInDTO createcheckInUser(@RequestBody CheckInDTO body){
         return checkInService.createCheckIn(body.getUsername(),body.getEmail());
@@ -115,6 +136,26 @@ public class AdminController {
         return checkOutService.getAllCheckOuts();
     }
 
+    */
+
+   
+   //view all available fitnessclasses from Fitness Class database
+   //send Jwt Token
+    @PostMapping("/fitnessclass")
+    public List<FitnessClassDTO> fitnessClass() {
+        return fitnessClassService.getAllFitnessClasses();
+    }
+
+    //Add a new fitness Class in Fitness class database
+    //send {"type":"yoga"} + Jwt Token  
+    @PostMapping("/fitnessclass/add")
+    public FitnessClassDTO addFitnessClass(@RequestBody FitnessClassDTO body) {
+        return fitnessClassService.addFitnessClass(body.getType());
+    }
+
+    //Register a Fitness class by user
+    //add 100 points to user, if registration success
+    //send {"username": "username", "classType"="Yoga"} + jwt Token
     @PostMapping("/registerclass")
     public ApplicationUserDTO registerClass(@RequestBody ApplicationUserDTO body){
         ApplicationUserDTO savedApplicationUserDTO = userService.registerClass(body.getUsername(),body.getClassType());
@@ -125,18 +166,8 @@ public class AdminController {
         return savedApplicationUserDTO;    
     }
 
-    @PostMapping("/fitnessclass")
-    public List<FitnessClassDTO> fitnessClass() {
-        return fitnessClassService.getAllFitnessClasses();
-    }
+    /* Not required to implement
 
-    @PostMapping("/fitnessclass/add")
-    public FitnessClassDTO addFitnessClass(@RequestBody FitnessClassDTO body) {
-        return fitnessClassService.addFitnessClass(body.getType());
-    }
-
-    
-    
     @PostMapping("/classattendance/create")
     public ClassAttendanceDTO createClassAttendance(@RequestBody ClassAttendanceDTO body){
         ApplicationUser user = userRepository.findByUsernameAndEmail(body.getUsername(), body.getEmail()).get();
@@ -160,69 +191,99 @@ public class AdminController {
         return rewardPointService.addPointsClassAttendance(body.getUserId());
     }
 
+    */
+
+    //to view referrer, who refer the user
+    //send {"username":"Alex"} + jwt token
     @PostMapping("/referrer/view")
     public ReferralDTO viewReferrer(@RequestBody ApplicationUserDTO body){
         return referralService.viewReferrer(body.getUsername());
     }
 
+    //to view list of referee, how many users are reffered by the user
+    //send {"username":"Alex"} + jwt token
     @PostMapping("/referree/view")
     public List<ReferralDTO> viewReferree(@RequestBody ApplicationUserDTO body){
         return referralService.viewReferree(body.getUsername());
     }
 
-    @PostMapping("/referrel/view")
+    //List all instances of referral database
+    //send {"username":"Alex"} + jwt token
+    @PostMapping("/referral/view")
     public List<ReferralDTO> viewReferrals(){
         return referralService.viewReferrals();
     }
 
+    //Allready implemented while registering a new user
     @PostMapping("/referrer/addPoints")
     public RewardPointDTO addPointsReferrer(@RequestBody ApplicationUserDTO body){
         return rewardPointService.addPointsReferrer(body.getUsername());
     }
 
+    //During new sign up, 100 points will be added to refferrer. This points willbe stored in unapproved reward database.
+    //to view unapproved reward of a user
+    //send {"username":"Alex"} + jwt token
     @PostMapping("/unapprovedreward/view")
     public List<UnapprovedRewardDTO> viewUnapprovedReward(@RequestBody ApplicationUserDTO body){
-        ApplicationUser applicationUser = userRepository.findById(body.getUserId()).get();
+        ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return unapprovedRewardService.getAllUnapprovedRewardsForUser(applicationUser);
     }
 
+    //To view unapproved reward of all user
+    //send jwt token
     @PostMapping("/unapprovedreward/allview")
     public List<UnapprovedRewardDTO> viewAllUnapprovedreward(){
         return unapprovedRewardService.getAllUnapprovedRewards();
     }
 
+    //to view approved reward points of user
+    //send {"username":"Alex"} + jwt token
     @PostMapping("/rewardpoint/view")
-   public List<RewardPointDTO> viewRewardPoint(@RequestBody ApplicationUserDTO body){
-        ApplicationUser applicationUser = userRepository.findById(body.getUserId()).get();
+    public List<RewardPointDTO> viewRewardPoint(@RequestBody ApplicationUserDTO body){
+        ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return rewardPointService.getAllRewardPointsForUser(applicationUser);
     }
 
+    //to view approved reward point of all users from reward point database
+    //send jwt token
     @PostMapping("/rewardpoint/allview")
     public List<RewardPointDTO> viewAllRewardPoint(){
         return rewardPointService.getAllRewardPoints();
     }
 
+    //to approve unapproved reward by admin
+    //it adds point to rewardpoint database for a user
+    //then it deletes points from unapproved reward database.
+    //send {"pointId": 1, "username":"Alex", "pointBlance":100} + jwt token
+    @PostMapping("/unapprovedreward/approve")
+    public RewardPointDTO approveRewardPoint(@RequestBody UnapprovedRewardDTO body){
+        return rewardApprovalService.approveRewardPoint(body.getPointId(), body.getUsername(), body.getPointBalance());
+    }
+
+    //to view the list of reward redemption made by user
+    //send {"username":"Alex"} +jwt Token
     @PostMapping("/rewardredemption/view")
     public List<RewardRedemptionDTO> viewRewardRedemption(@RequestBody ApplicationUserDTO body){
-        ApplicationUser applicationUser = userRepository.findById(body.getUserId()).get();
+        ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return rewardRedemptionService.getRedemptionRecordsForUser(applicationUser);
     }
 
+    //to view list of reward redemption made by all user from reward redemption database
+    //send jwt token
     @PostMapping("/rewardredemption/allview")
     public List<RewardRedemptionDTO> viewAllRewardRedemption(){
         return rewardRedemptionService.getALLRedemptionRecords();
     }
 
+    //to redeem rewards. it stores the redemption instance in reward redemption database
+    //it reduce the point of the user if redemption successful
+    //send {"username": "Alex", "items":"T-shirt", "point":200} + jwt token
     @PostMapping("/rewardeedemption/redemption")
     public RewardRedemptionDTO redeemRewards(@RequestBody RewardRedemptionDTO body){
         ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return rewardRedemptionService.redeemPoints(applicationUser, body.getItems(), body.getPoint());
     }
 
-    //In progress
-    @PostMapping("/unapprovedreward/approve")
-    public RewardPointDTO approveRewardPoint(@RequestBody UnapprovedRewardDTO body){
-        return rewardApprovalService.approveRewardPoint(body.getPointId(), body.getUsername(), body.getPointBalance());
-    }
+    
     
 }

@@ -1,5 +1,6 @@
 package team3_backend.backend.services;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -68,9 +69,23 @@ public class UserService implements UserDetailsService {
                 user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
-                null,
+                user.getAuthorities(),
                 null,
                 classType);
+    }
+
+
+    public ApplicationUserDTO userView(String username) {
+        ApplicationUser savedUser = userRepository.findByUsername(username).get();
+        return convertToDTO(savedUser);
+    }
+
+
+    public List<ApplicationUserDTO> allUserView() {
+        List<ApplicationUser> savedUsers = userRepository.findAll();
+        return savedUsers.stream()
+                       .map(this::convertToDTO)
+                       .collect(Collectors.toList());
     }
     
 

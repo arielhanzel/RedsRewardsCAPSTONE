@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +43,7 @@ public class AuthenticationController {
     private UnapprovedRewardService unapprovedRewardService;
 
     @PostMapping("/register")
+    @Transactional
     public ApplicationUser registerUser(@RequestBody RegistrationDTO body){
         ApplicationUser savedApplicationUser = authenticationService.registerUser(body.getUsername(), body.getPassword(), body.getEmail());
 

@@ -19,6 +19,8 @@ import team3_backend.backend.models_reward_dto.ClassAttendanceDTO;
 import team3_backend.backend.models_reward_dto.FitnessClassDTO;
 import team3_backend.backend.models_reward_dto.ReferralDTO;
 import team3_backend.backend.models_reward_dto.RewardPointDTO;
+import team3_backend.backend.models_reward_dto.RewardRedemptionDTO;
+import team3_backend.backend.models_reward_dto.UnapprovedRewardDTO;
 import team3_backend.backend.repository.UserRepository;
 import team3_backend.backend.reward_repository.FitnessClassRepository;
 import team3_backend.backend.reward_services.CheckInService;
@@ -26,7 +28,9 @@ import team3_backend.backend.reward_services.CheckOutService;
 import team3_backend.backend.reward_services.ClassAttendanceService;
 import team3_backend.backend.reward_services.FitnessClassService;
 import team3_backend.backend.reward_services.ReferralService;
+import team3_backend.backend.reward_services.RewardApprovalService;
 import team3_backend.backend.reward_services.RewardPointService;
+import team3_backend.backend.reward_services.RewardRedemptionService;
 import team3_backend.backend.reward_services.UnapprovedRewardService;
 import team3_backend.backend.services.UserService;
 
@@ -35,7 +39,7 @@ import team3_backend.backend.services.UserService;
 @CrossOrigin("*")
 public class UserController {
 
-     @Autowired
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -64,6 +68,13 @@ public class UserController {
 
     @Autowired
     private UnapprovedRewardService unapprovedRewardService;
+
+    @Autowired
+    private RewardApprovalService rewardApprovalService;
+
+    @Autowired
+    private RewardRedemptionService rewardRedemptionService;
+
 
     @GetMapping("/")
     public String userPage(){
@@ -135,25 +146,29 @@ public class UserController {
 
 
     @PostMapping("/unapprovedreward/view")
-    public String point1(){
-        return "ok";
+    public List<UnapprovedRewardDTO> viewUnapprovedReward(@RequestBody ApplicationUserDTO body){
+        ApplicationUser applicationUser = userRepository.findById(body.getUserId()).get();
+        return unapprovedRewardService.getAllUnapprovedRewardsForUser(applicationUser);
     }
 
 
     @PostMapping("/rewardpoint/view")
-    public String point4(){
-        return "ok";
+    public List<RewardPointDTO> viewRewardPoint(@RequestBody ApplicationUserDTO body){
+        ApplicationUser applicationUser = userRepository.findById(body.getUserId()).get();
+        return rewardPointService.getAllRewardPointsForUser(applicationUser);
     }
 
 
     @PostMapping("/rewardredemption/view")
-    public String rewardRedemption(){
-        return "ok";
+    public List<RewardRedemptionDTO> viewRewardRedemption(@RequestBody ApplicationUserDTO body){
+        ApplicationUser applicationUser = userRepository.findById(body.getUserId()).get();
+        return rewardRedemptionService.getRedemptionRecordsForUser(applicationUser);
     }
 
-     @PostMapping("/rewardeedemption/redemption")
-    public String rewardRedemption2(){
-        return "ok";
+    @PostMapping("/rewardeedemption/redemption")
+    public RewardRedemptionDTO redeemRewards(@RequestBody RewardRedemptionDTO body){
+        ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
+        return rewardRedemptionService.redeemPoints(applicationUser, body.getItems(), body.getPoint());
     }
 
 }
