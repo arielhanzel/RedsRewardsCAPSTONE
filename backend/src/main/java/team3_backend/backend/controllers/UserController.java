@@ -81,22 +81,10 @@ public class UserController {
         return "User information";
     }
 
-
-    @PostMapping("/checkin/view")
-    public List<CheckInDTO> viewCheckInUser(@RequestBody CheckInDTO body){
-        return checkInService.getAllCheckInsForUser(body.getUsername(), body.getEmail());
-    }
-
-
-    @PostMapping("/checkout/create")
-    public CheckOutDTO createcheckOutUser(@RequestBody CheckOutDTO body){
-         return checkOutService.createCheckOut(body.getUsername(),body.getEmail());
-    }
-
-    @PostMapping("/checkout/view")
-    public List<CheckOutDTO> viewCheckOutUser(@RequestBody CheckInDTO body){
-    return checkOutService.getAllCheckOutsForUser(body.getUsername(), body.getEmail());
-    }
+    @PostMapping("/user/view")
+    public ApplicationUserDTO userView(@RequestBody ApplicationUserDTO body){
+        return userService.userView(body.getUsername());
+    } 
 
     @PostMapping("/registerclass")
     public ApplicationUserDTO registerClass(@RequestBody ApplicationUserDTO body){
@@ -113,26 +101,6 @@ public class UserController {
         return fitnessClassService.getAllFitnessClasses();
     }
 
-    
-    
-    @PostMapping("/classattendance/create")
-    public ClassAttendanceDTO createClassAttendance(@RequestBody ClassAttendanceDTO body){
-        ApplicationUser user = userRepository.findByUsernameAndEmail(body.getUsername(), body.getEmail()).get();
-        FitnessClass fitnessClass = fitnessClassRepository.findByType(body.getClassName()).get();
-        return classAttendanceService.createClassAttendance(user, fitnessClass);
-    }
-
-    @PostMapping("/classattendance/view")
-    public List<ClassAttendanceDTO> getClassAttendanceByUser(@RequestBody ClassAttendanceDTO body){
-         ApplicationUser user = userRepository.findByUsernameAndEmail(body.getUsername(), body.getEmail()).get();
-        return classAttendanceService.getClassAttendancesByUser(user);
-    }
-
-
-    @PostMapping("/classattendance/addpoints")
-    public RewardPointDTO addPointsClassAttendance(@RequestBody ApplicationUserDTO body){
-        return rewardPointService.addPointsClassAttendance(body.getUserId());
-    }
 
     @PostMapping("/referrer/view")
     public ReferralDTO viewReferrer(@RequestBody ApplicationUserDTO body){
@@ -158,6 +126,11 @@ public class UserController {
         return rewardPointService.getAllRewardPointsForUser(applicationUser);
     }
 
+    @PostMapping("/rewardpoint/totalpoints")
+    public Integer viewTotalPoints(@RequestBody ApplicationUserDTO body){
+        ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
+        return rewardPointService.getTotalRewardPointsForUser(applicationUser);
+    }
 
     @PostMapping("/rewardredemption/view")
     public List<RewardRedemptionDTO> viewRewardRedemption(@RequestBody ApplicationUserDTO body){
