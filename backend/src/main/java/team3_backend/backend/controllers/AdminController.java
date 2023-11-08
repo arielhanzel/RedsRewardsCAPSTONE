@@ -132,7 +132,7 @@ public class AdminController {
     }
 
 
-    
+
 
     /* Not Required to implement
     
@@ -320,8 +320,5 @@ public class AdminController {
     public RewardRedemptionDTO redeemRewards(@RequestBody RewardRedemptionDTO body){
         ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return rewardRedemptionService.redeemPoints(applicationUser, body.getItems(), body.getPoint());
-    }
-
-    
-    
+    }   
 }
