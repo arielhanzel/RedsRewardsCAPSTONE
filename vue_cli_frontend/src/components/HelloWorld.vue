@@ -13,14 +13,20 @@
       </video>
     </div>
     <div class="hello">
-      <h1>Welcome to Red's Rewards!</h1>
+      <h1 v-if="useStore.token && useStore.token != 'null'">
+        Welcome back, {{ useStore.user }}!
+      </h1>
+      <h1 v-else>Welcome to Red's Rewards!</h1>
       <p>
         Earn points to redeem exciting rewards!<br />
         Learn more about how to earn points
         <router-link to="/about">here</router-link>.
       </p>
 
-      <div class="gamification">
+      <div
+        v-if="useStore.token && useStore.token != 'null'"
+        class="gamification"
+      >
         <div class="points">
           <span>Points: {{ useStore.points }}</span>
         </div>
@@ -43,9 +49,14 @@
 
 <script setup>
 import { ref } from "vue";
+import { onMounted } from "vue";
 import { useUserStore } from "@/store";
 
 const useStore = useUserStore();
+
+onMounted(() => {
+  useStore.initializeFromLocalStorage();
+});
 const bgVideo = ref(null);
 const currentVideo = ref(0);
 const videos = [

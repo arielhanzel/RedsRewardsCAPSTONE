@@ -24,6 +24,16 @@ export const useUserStore = defineStore("user", {
     setToken(token) {
       localStorage.setItem("userToken", token);
     },
+    initializeFromLocalStorage() {
+      const token = localStorage.getItem("userToken");
+      const username = localStorage.getItem("username");
+
+      if (token) {
+        this.token = token;
+        this.user = username; // Reinitialize the username
+        this.loggedIn = true;
+      }
+    },
     async login(username, password) {
       // Call an authentication service to log in the user (e.g., Firebase Authentication).
       // Replace this with your actual authentication logic.
@@ -57,6 +67,7 @@ export const useUserStore = defineStore("user", {
             localStorage.setItem("userToken", response.data.jwt);
             console.log("Token: ", localStorage.getItem("userToken"));
             this.user = username;
+            localStorage.setItem("username", username);
             this.loggedIn = true;
             console.log("User logged in:", response.data);
             router.push("/");
