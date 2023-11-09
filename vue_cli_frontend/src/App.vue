@@ -21,13 +21,30 @@
     >
       <router-link to="/">Home</router-link>
       <router-link to="/about">About</router-link>
-      <router-link v-if="useStore.loggedIn" @click="useStore.logout" to="/login"
+      <router-link
+        v-if="useStore.token && useStore.token != 'null'"
+        to="/redeem"
+        >Redeem</router-link
+      >
+      <router-link
+        v-if="useStore.token && useStore.token != 'null'"
+        @click="useStore.logout"
+        to="/login"
         >Logout</router-link
       >
-      <router-link v-if="!useStore.loggedIn" to="/login">Login</router-link>
-      <router-link v-if="!useStore.loggedIn" to="/signup">Sign Up</router-link>
+      <router-link
+        v-if="!(useStore.token && useStore.token != 'null')"
+        to="/login"
+        >Login</router-link
+      >
+      <router-link
+        v-if="!(useStore.token && useStore.token != 'null')"
+        to="/signup"
+        >Sign Up</router-link
+      >
     </nav>
   </div>
+  <!-- <p>Token: {{ useStore.token }}</p> -->
   <router-view />
 </template>
 
@@ -68,6 +85,7 @@ export default {
   },
   closeMenuOnClick() {
     if (!this.isCursorOverMenu) {
+      // Close only if not over the menu
       this.isMenuOpen = false;
     }
   },

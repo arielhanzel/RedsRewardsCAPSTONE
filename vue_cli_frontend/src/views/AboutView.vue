@@ -118,6 +118,8 @@ export default {
     document.addEventListener("click", () => {
       listItems.forEach((li) => li.setAttribute("data-tooltip", "closed"));
     });
+
+    document.title = "Red's Rewards - About";
   },
 };
 </script>
