@@ -149,7 +149,6 @@ export default {
             username: this.username,
             password: this.password,
             email: this.email,
-            
             referrer: "admin",
           }
         );
