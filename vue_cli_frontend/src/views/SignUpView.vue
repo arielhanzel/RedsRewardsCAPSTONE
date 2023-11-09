@@ -123,7 +123,6 @@ button[type="submit"]:hover {
 import { ref } from "vue";
 //import { useUserStore } from "@/store";
 import axios from "axios";
-import { useRouter } from "vue-router";
 
 export default {
   data() {
@@ -141,7 +140,6 @@ export default {
     },
     async signup() {
       //const userStore = useUserStore();
-      const router = useRouter();
 
       // Call your store action or API request here
       try {
@@ -151,12 +149,14 @@ export default {
             username: this.username,
             password: this.password,
             email: this.email,
+            
+            referrer: "admin",
           }
         );
 
         if (response.data) {
           alert("Sign up successful! Please log in to generate a token.");
-          router.push("/login");
+          this.$router.push("/login");
         } else {
           alert("Sign up failed.");
         }
