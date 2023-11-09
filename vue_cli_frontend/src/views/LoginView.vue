@@ -3,20 +3,11 @@
     <h2>Login</h2>
     <div class="login-container">
       <form @submit.prevent="login" class="login-form">
-        <input type="text" placeholder="username" v-model="username" required />
-<<<<<<< HEAD
-        <input
-          type="password"
-          placeholder="password"
-          v-model="password"
-          required
-        />
-        <button type="submit">Log In</button>
-=======
+        <input type="text" placeholder="Username" v-model="username" required />
         <div class="password-container">
           <input
             :type="passwordType"
-            placeholder="password"
+            placeholder="Password"
             v-model="password"
             required
           />
@@ -35,10 +26,7 @@
             />
           </span>
         </div>
-        <button type="submit" @click="useStore.login(username, password)">
-          Log In
-        </button>
->>>>>>> main
+        <button type="submit">Log In</button>
         <span>
           <br />
           <br />
@@ -49,14 +37,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  mounted() {
-    document.title = "Red's Rewards - Login";
-  },
-};
-</script>
 
 <style>
 .login {
@@ -137,59 +117,47 @@ button[type="submit"]:hover {
 }
 </style>
 
-<<<<<<< HEAD
 <script>
-import axios from "axios";
+import { ref } from "vue";
 import { useUserStore } from "@/store";
+import axios from "axios";
 
 export default {
   data() {
     return {
       username: "",
       password: "",
+      passwordType: ref("password"),
     };
   },
   methods: {
+    togglePasswordVisibility() {
+      this.passwordType =
+        this.passwordType === "password" ? "text" : "password";
+    },
     async login() {
+      const userStore = useUserStore();
       try {
-        // Calling the backend
         const response = await axios.post("http://localhost:8000/auth/login", {
           username: this.username,
           password: this.password,
         });
 
         if (response.data.jwt) {
-          // Assuming the server returns a token on successful login
           alert("Login successful!");
-          // Optionally, you can store the token in localStorage or Vuex store, etc.
-          // localStorage.setItem('token', response.data.token);
-
-          const store = useUserStore();
-          store.login(response.data.user.username);
-          store.setToken(response.data.jwt);
+          userStore.setToken(response.data.jwt);
+          this.$router.push("/"); // Make sure to define the route you want to navigate to
         } else {
           alert("Invalid username or password");
         }
       } catch (error) {
-        // Handle error scenarios here
         alert("Failed to login. Please try again later.");
-        alert(error);
         console.error("Error logging in:", error);
       }
     },
   },
+  mounted() {
+    document.title = "Red's Rewards - Login";
+  },
 };
-=======
-<script setup>
-import { ref } from "vue";
-import { useUserStore } from "@/store";
-const useStore = useUserStore();
-const username = "";
-const password = "";
-const passwordType = ref("password");
-
-function togglePasswordVisibility() {
-  passwordType.value = passwordType.value === "password" ? "text" : "password";
-}
->>>>>>> main
 </script>

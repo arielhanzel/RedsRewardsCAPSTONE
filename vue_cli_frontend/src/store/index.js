@@ -10,13 +10,7 @@ export const useUserStore = defineStore("user", {
     points: 220,
     pointsNeeded: 1000,
     loggedIn: false,
-<<<<<<< HEAD
-    token: null,
-    check: false,
-    responseData: null,
-=======
     token: localStorage.getItem("userToken"),
->>>>>>> main
   }),
   getters: {
     progressPercentage() {
@@ -27,24 +21,6 @@ export const useUserStore = defineStore("user", {
     },
   },
   actions: {
-<<<<<<< HEAD
-    async login(username) {
-      // Call an authentication service to log in the user (e.g., Firebase Authentication).
-      // Replace this with your actual authentication logic.
-      // const user = await authService.login(email, password);
-      if (this.loggedIn) {
-        alert("Already logged in");
-        router.push("/");
-      } else {
-        const user = username;
-        // Update the user in the store state.
-        this.user = user;
-        this.points = 780;
-        this.loggedIn = true;
-        router.push("/");
-        alert("Directing to home Page");
-      }
-=======
     setToken(token) {
       localStorage.setItem("userToken", token);
     },
@@ -104,7 +80,6 @@ export const useUserStore = defineStore("user", {
           console.error("Error loggin in user:", error);
           alert(`${error}`);
         });
->>>>>>> main
     },
     logout() {
       console.log("User logged out:", this.user);
@@ -122,11 +97,6 @@ export const useUserStore = defineStore("user", {
       const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
       if (username !== "" && password !== "") {
         if (emailPattern.test(email)) {
-<<<<<<< HEAD
-          this.user = username;
-          this.email = email;
-          this.check = true;
-=======
           // this.user = username;
           // this.email = email;
           // this.password = password;
@@ -142,7 +112,6 @@ export const useUserStore = defineStore("user", {
               console.error("Error loggin in user:", error);
               alert(`${error}`);
             });
->>>>>>> main
         } else {
           alert("Invalid email address");
         }
@@ -150,19 +119,6 @@ export const useUserStore = defineStore("user", {
         alert("Please fill out all fields");
       }
     },
-<<<<<<< HEAD
-    setToken(jwt) {
-      this.token = jwt;
-    },
-    getToken() {
-      return this.token;
-    },
-    setResponseData(responseData) {
-      this.responseData = responseData;
-    },
-    getResponseData() {
-      return this.responseData;
-=======
     redeemReward(reward) {
       if (this.points >= reward.points) {
         alert(`You have redeemed a ${reward.name}!`);
@@ -178,7 +134,6 @@ export const useUserStore = defineStore("user", {
     },
     addPoints(points) {
       this.points += points;
->>>>>>> main
     },
     // Define actions here
   },

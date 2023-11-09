@@ -21,7 +21,6 @@ export default {
   components: {
     HelloWorld,
   },
-<<<<<<< HEAD
   setup() {
     const userStore = useUserStore();
 
@@ -32,10 +31,6 @@ export default {
       token: userStore.token,
       // ... other properties you want to expose
     };
-=======
-  mounted() {
-    document.title = "Red's Rewards";
->>>>>>> main
   },
 };
 </script>

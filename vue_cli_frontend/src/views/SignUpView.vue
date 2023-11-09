@@ -5,19 +5,10 @@
       <form @submit.prevent="signup" class="signup-form">
         <input type="text" placeholder="Username" v-model="username" required />
         <input type="email" placeholder="Email" v-model="email" required />
-<<<<<<< HEAD
-        <input
-          type="password"
-          placeholder="Password"
-          v-model="password"
-          required
-        />
-        <button type="submit">Sign Up</button>
-=======
         <div class="password-container">
           <input
             :type="passwordType"
-            placeholder="password"
+            placeholder="Password"
             v-model="password"
             required
           />
@@ -36,13 +27,7 @@
             />
           </span>
         </div>
-        <button
-          @click="useStore.signup(username, email, password)"
-          type="submit"
-        >
-          Sign Up
-        </button>
->>>>>>> main
+        <button type="submit">Sign Up</button>
         <span>
           <br />
           <br />
@@ -53,14 +38,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  mounted() {
-    document.title = "Red's Rewards - Sign Up";
-  },
-};
-</script>
 
 <style>
 .signup {
@@ -142,11 +119,11 @@ button[type="submit"]:hover {
 }
 </style>
 
-<<<<<<< HEAD
 <script>
+import { ref } from "vue";
+//import { useUserStore } from "@/store";
 import axios from "axios";
-import router from "../router";
-import { useUserStore } from "@/store";
+import { useRouter } from "vue-router";
 
 export default {
   data() {
@@ -154,56 +131,43 @@ export default {
       username: "",
       email: "",
       password: "",
+      passwordType: ref("password"),
     };
   },
   methods: {
+    togglePasswordVisibility() {
+      this.passwordType =
+        this.passwordType === "password" ? "text" : "password";
+    },
     async signup() {
-      const useStore = useUserStore();
-      useStore.signup(this.username, this.email, this.password);
-      if (useStore.check) {
-        try {
-          // Calling the backend
-          const response = await axios.post(
-            "http://localhost:8000/auth/register",
-            {
-              username: this.username,
-              password: this.password,
-              email: this.email,
-            }
-          );
+      //const userStore = useUserStore();
+      const router = useRouter();
 
-          if (response.data) {
-            // Assuming the server returns a token on successful login
-            alert("Sign up successful! you have to log in to generate token");
-            // Optionally, you can store the token in localStorage or Vuex store, etc.
-            // localStorage.setItem('token', response.data.token);
-
-            router.push("/login");
-          } else {
-            alert("Invalid username or password");
+      // Call your store action or API request here
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/auth/register",
+          {
+            username: this.username,
+            password: this.password,
+            email: this.email,
           }
-        } catch (error) {
-          // Handle error scenarios here
-          alert("Failed to login. Please try again later.");
-          alert(error);
-          console.error("Error logging in:", error);
+        );
+
+        if (response.data) {
+          alert("Sign up successful! Please log in to generate a token.");
+          router.push("/login");
+        } else {
+          alert("Sign up failed.");
         }
+      } catch (error) {
+        alert("An error occurred during sign up.");
+        console.error("Error during sign up:", error);
       }
     },
   },
+  mounted() {
+    document.title = "Red's Rewards - Sign Up";
+  },
 };
-=======
-<script setup>
-import { ref } from "vue";
-import { useUserStore } from "@/store";
-const useStore = useUserStore();
-const username = "";
-const email = "";
-const password = "";
-const passwordType = ref("password");
-
-function togglePasswordVisibility() {
-  passwordType.value = passwordType.value === "password" ? "text" : "password";
-}
->>>>>>> main
 </script>
