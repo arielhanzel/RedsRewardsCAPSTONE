@@ -32,5 +32,13 @@ export default {
       // ... other properties you want to expose
     };
   },
+  mounted() {
+    const userStore = useUserStore();
+    if (userStore.loggedIn && userStore.user) {
+      document.title = "Red's Rewards - " + userStore.user;
+    } else {
+      document.title = "Red's Rewards";
+    }
+  },
 };
 </script>

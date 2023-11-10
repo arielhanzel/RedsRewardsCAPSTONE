@@ -13,9 +13,7 @@
       </video>
     </div>
     <div class="hello">
-      <h1 v-if="useStore.token && useStore.token != 'null'">
-        Welcome back, {{ useStore.user }}!
-      </h1>
+      <h1 v-if="userStore.loggedIn">Welcome back, {{ userStore.user }}!</h1>
       <h1 v-else>Welcome to Red's Rewards!</h1>
       <p>
         Earn points to redeem exciting rewards!<br />
@@ -23,22 +21,19 @@
         <router-link to="/about">here</router-link>.
       </p>
 
-      <div
-        v-if="useStore.token && useStore.token != 'null'"
-        class="gamification"
-      >
+      <div v-if="userStore.loggedIn" class="gamification">
         <div class="points">
-          <span>Points: {{ useStore.points }}</span>
+          <span>Points: {{ userStore.points }}</span>
         </div>
         <div class="progress-bar">
           <div
             class="progress"
-            :style="{ width: useStore.progressPercentage + '%' }"
+            :style="{ width: userStore.progressPercentage + '%' }"
           ></div>
         </div>
         <div>
           <span>
-            {{ useStore.pointsToGoal }} points until your next reward
+            {{ userStore.pointsToGoal }} points until your next reward
             unlock!</span
           >
         </div>
@@ -52,11 +47,12 @@ import { ref } from "vue";
 import { onMounted } from "vue";
 import { useUserStore } from "@/store";
 
-const useStore = useUserStore();
+const userStore = useUserStore();
 
 onMounted(() => {
-  useStore.initializeFromLocalStorage();
+  userStore.initializeFromLocalStorage();
 });
+
 const bgVideo = ref(null);
 const currentVideo = ref(0);
 const videos = [
