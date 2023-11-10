@@ -146,6 +146,8 @@ export default {
         if (response.data.jwt) {
           alert("Login successful!");
           userStore.setToken(response.data.jwt);
+          this.user = response.data.user.username;
+          localStorage.setItem("username", response.data.user.username);
           this.$router.push("/"); // Make sure to define the route you want to navigate to
         } else {
           alert("Invalid username or password");
