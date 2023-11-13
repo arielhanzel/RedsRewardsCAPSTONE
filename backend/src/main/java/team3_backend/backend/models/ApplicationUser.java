@@ -28,8 +28,19 @@ public class ApplicationUser implements UserDetails{
 	@Column(unique=true)
     private String username;
     private String password;
+	@Column(unique=true)
+	private String email;
+	private Integer points;
+	private String registeredClasses;
+	private Integer classesAttended;
+	private Date checkinlist;
+	private Date checkoutlist; 
+	private String rewardRedemption;
 
-    @ManyToMany(fetch=FetchType.EAGER)
+
+
+
+	@ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
         name="user_role_junction",
         joinColumns = {@JoinColumn(name="user_id")},
@@ -43,12 +54,20 @@ public class ApplicationUser implements UserDetails{
 	}
 	
 
-	public ApplicationUser(Integer userId, String username, String password, Set<Role> authorities) {
+	public ApplicationUser(Integer userId, String username, String password, Set<Role> authorities, String email, Integer points, Integer classesAttended, String registeredClasses, Date checkinlist, Date checkoutlist, String rewardRedemption) {
 		super();
 		this.userId = userId;
 		this.username = username;
 		this.password = password;
 		this.authorities = authorities;
+		this.email = email;
+		this.points = points;
+		this.classesAttended = classesAttended;
+		this.registeredClasses = registeredClasses;
+		this.checkinlist = checkinlist;
+		this.checkoutlist = checkoutlist;
+		this.rewardRedemption = rewardRedemption;
+
 	}
 
     public Integer getUserId() {
@@ -87,6 +106,72 @@ public class ApplicationUser implements UserDetails{
 	
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+
+	public Integer getPoints() {
+		return this.points;
+	}
+	
+	public void setPoints(Integer points) {
+		this.points = points;
+	}
+
+
+	public Integer getclassesAttended() {
+		return this.classesAttended;
+	}
+	
+	public void setclassesAttended(Integer classesAttended) {
+		this.classesAttended = classesAttended;
+	}
+
+
+	public String getregisteredClasses() {
+	
+		return this.password;
+	}
+	
+	public void setregisteredClasses(String registeredClasses) {
+		this.registeredClasses = registeredClasses;
+	}
+
+
+	public Date getcheckinlist() {
+		return this.checkinlist;
+	}
+
+
+	public void setcheckinlist(Date checkinlist) {
+		this.checkinlist = checkinlist;
+	}
+
+	public Date getcheckoutlist() {
+		return this.checkoutlist;
+	}
+
+
+	public void setcheckoutlist(Date checkoutlist) {
+		this.checkoutlist = checkoutlist;
+	}
+
+
+	public Date getrewardRedemption() {
+		return this.rewardRedemption;
+	}
+
+
+	public void setrewardRedemption(Date rewardRedemption) {
+		this.rewardRedemption = rewardRedemptiont;
 	}
 	
 	/* If you want account locking capabilities create variables and ways to set them for the methods below */
