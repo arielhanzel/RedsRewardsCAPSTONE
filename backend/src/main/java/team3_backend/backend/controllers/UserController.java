@@ -3,11 +3,14 @@ package team3_backend.backend.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import team3_backend.backend.models.ApplicationUser;
@@ -143,6 +146,25 @@ public class UserController {
         ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return rewardRedemptionService.redeemPoints(applicationUser, body.getItems(), body.getPoint());
     }
+
+    @GetMapping("/user/role")
+    public ResponseEntity<String> getUserRole(@RequestParam String username) {
+        try {
+            // Call the UserService to get the user by username
+            ApplicationUser user = (ApplicationUser) userService.loadUserByUsername(username);
+            
+            // Check if the user has a role and return it in the response
+            if (user != null && user.getAuthorities() != null && !user.getAuthorities().isEmpty()) {
+                String role = user.getAuthorities().iterator().next().getAuthority(); // Assuming the user has only one role
+                return ResponseEntity.ok(role);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User role not found");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching user role");
+        }
+    }
+
 
 }
 

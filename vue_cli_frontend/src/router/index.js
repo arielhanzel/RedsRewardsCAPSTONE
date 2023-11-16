@@ -4,6 +4,7 @@ import AboutView from "../views/AboutView.vue";
 import LoginView from "../views/LoginView.vue";
 import SignUpView from "../views/SignUpView.vue";
 import RedeemView from "../views/RedeemView.vue";
+import AdminView from "../views/AdminView.vue";
 import { useUserStore } from "@/store";
 
 const routes = [
@@ -35,6 +36,12 @@ const routes = [
     component: RedeemView,
     meta: { requiresAuth: true },
   },
+  {
+    path: "/admin",
+    name: "admin",
+    component: AdminView,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
 ];
 
 const router = createRouter({
@@ -42,19 +49,29 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to) => {
-  const useStore = useUserStore();
-  if (to.meta.requiresAuth) {
-    if (!(useStore.token && useStore.token != "null")) {
-      alert("Please log in");
-      return {
-        path: "/login",
-        query: { nextUrl: to.path },
-      };
-    } else {
-      return true;
+router.beforeEach(async (to) => {
+  const userStore = useUserStore();
+
+  if (!userStore.loggedIn && localStorage.getItem("userToken")) {
+    try {
+      await userStore.initializeUser();
+    } catch (error) {
+      console.error("Error initializing user:", error);
+      return { path: "/login" };
     }
   }
+
+  if (to.meta.requiresAuth && !userStore.loggedIn) {
+    alert("Please log in");
+    return { path: "/login", query: { nextUrl: to.path } };
+  }
+
+  if (to.meta.requiresAdmin && userStore.role !== "ADMIN") {
+    alert("Access denied. Admins only.");
+    return { path: "/" };
+  }
+
+  return true;
 });
 
 export default router;

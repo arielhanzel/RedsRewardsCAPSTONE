@@ -120,7 +120,6 @@ button[type="submit"]:hover {
 <script>
 import { ref } from "vue";
 import { useUserStore } from "@/store";
-import axios from "axios";
 
 export default {
   data() {
@@ -138,20 +137,7 @@ export default {
     async login() {
       const userStore = useUserStore();
       try {
-        const response = await axios.post("http://localhost:8000/auth/login", {
-          username: this.username,
-          password: this.password,
-        });
-
-        if (response.data.jwt) {
-          alert("Login successful!");
-          userStore.setToken(response.data.jwt);
-          this.user = response.data.user.username;
-          localStorage.setItem("username", response.data.user.username);
-          this.$router.push("/"); // Make sure to define the route you want to navigate to
-        } else {
-          alert("Invalid username or password");
-        }
+        await userStore.login(this.username, this.password);
       } catch (error) {
         alert("Failed to login. Please try again later.");
         console.error("Error logging in:", error);

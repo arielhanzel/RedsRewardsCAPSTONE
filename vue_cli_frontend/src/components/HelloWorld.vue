@@ -13,7 +13,7 @@
       </video>
     </div>
     <div class="hello">
-      <h1 v-if="userStore.loggedIn">Welcome back, {{ userStore.user }}!</h1>
+      <h1 v-if="userStore.loggedIn">Welcome back, {{ storedUsername }}!</h1>
       <h1 v-else>Welcome to Red's Rewards!</h1>
       <p>
         Earn points to redeem exciting rewards!<br />
@@ -44,14 +44,9 @@
 
 <script setup>
 import { ref } from "vue";
-import { onMounted } from "vue";
 import { useUserStore } from "@/store";
 
 const userStore = useUserStore();
-
-onMounted(() => {
-  userStore.initializeFromLocalStorage();
-});
 
 const bgVideo = ref(null);
 const currentVideo = ref(0);
@@ -65,6 +60,8 @@ const onVideoEnded = () => {
   currentVideo.value = (currentVideo.value + 1) % videos.length;
   bgVideo.value.load();
 };
+
+const storedUsername = localStorage.getItem("username");
 </script>
 
 <style scoped>

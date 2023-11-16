@@ -11,6 +11,7 @@ export const useUserStore = defineStore("user", {
     pointsNeeded: 1000,
     loggedIn: false,
     token: localStorage.getItem("userToken"),
+    role: null,
   }),
   getters: {
     progressPercentage() {
@@ -24,14 +25,31 @@ export const useUserStore = defineStore("user", {
     setToken(token) {
       localStorage.setItem("userToken", token);
     },
-    initializeFromLocalStorage() {
+    async initializeUser() {
       const token = localStorage.getItem("userToken");
-      const username = localStorage.getItem("username");
 
       if (token) {
         this.token = token;
-        this.user = username; // Reinitialize the username
         this.loggedIn = true;
+
+        try {
+          const response = await axios.get(
+            "http://localhost:8000/user/user/role",
+            {
+              params: { username: localStorage.getItem("username") },
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+              },
+            }
+          );
+
+          if (response.data) {
+            this.role = response.data;
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          // Handle errors, e.g., by logging out the user
+        }
       }
     },
     async login(username, password) {
@@ -59,35 +77,48 @@ export const useUserStore = defineStore("user", {
         password: password,
       };
 
-      axios
-        .post("http://localhost:8000/auth/login", userData)
-        .then((response) => {
-          if (response.data.user != null) {
-            this.token = response.data.jwt;
-            localStorage.setItem("userToken", response.data.jwt);
-            console.log("Token: ", localStorage.getItem("userToken"));
-            this.user = username;
-            localStorage.setItem("username", username);
-            this.loggedIn = true;
-            console.log("User logged in:", response.data);
-            router.push("/");
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/auth/login",
+          userData
+        );
+
+        if (response.data.user != null) {
+          this.token = response.data.jwt;
+          localStorage.setItem("userToken", response.data.jwt);
+          this.user = username;
+          localStorage.setItem("username", username);
+          this.loggedIn = true;
+
+          if (
+            response.data.user.authorities &&
+            response.data.user.authorities.length > 0
+          ) {
+            this.role = response.data.user.authorities[0].authority;
           } else {
-            console.log("User not found:", response);
-            alert("User not found");
+            console.error("No authorities found for user");
           }
-        })
-        .catch((error) => {
-          console.error("Error loggin in user:", error);
-          alert(`${error}`);
-        });
+
+          console.log("User logged in:", response.data);
+          router.push("/");
+        } else {
+          console.log("User not found:", response);
+          alert("User not found");
+        }
+      } catch (error) {
+        console.error("Error logging in user:", error);
+        alert(`${error}`);
+      }
     },
     logout() {
       console.log("User logged out:", this.user);
       this.token = null;
       localStorage.removeItem("userToken");
+      localStorage.removeItem("username");
       console.log("Token: ", localStorage.getItem("userToken"));
       this.loggedIn = false;
       this.user = null;
+      this.role = null;
     },
     signup(username, email, password) {
       const userData = {
