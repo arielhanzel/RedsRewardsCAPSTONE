@@ -4,12 +4,15 @@ package team3_backend.backend.controllers;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -26,8 +29,9 @@ import team3_backend.backend.services.AuthenticationService;
 
 
 @RestController
-@RequestMapping("/auth")
 @CrossOrigin("*")
+@RequestMapping("/auth")
+
 public class AuthenticationController {
 
     @Autowired
@@ -90,5 +94,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     public LoginResponseDTO loginUser(@RequestBody RegistrationDTO body){
         return authenticationService.loginUser(body.getUsername(), body.getPassword());
+
+
     }
-}   
+    }   
