@@ -7,6 +7,7 @@
     </div>
     <!-- Add points for testing -->
     <button @click="useStore.addPoints(100)">Add Points</button>
+    <button @click="useStore.viewTotalPoints()">View Points</button>
 
     <div class="rewards-list">
       <div class="reward-item" v-for="(reward, index) in rewards" :key="index">
@@ -77,8 +78,12 @@ export default {
 </script>
 
 <script setup>
+import { onMounted } from "vue";
 import { useUserStore } from "@/store";
 const useStore = useUserStore();
+onMounted(() => {
+  useStore.viewTotalPoints();
+});
 </script>
 
 <style scoped>

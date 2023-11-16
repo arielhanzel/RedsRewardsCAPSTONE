@@ -4,10 +4,10 @@ import axios from "axios";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
-    user: null,
+    user: localStorage.getItem("username"),
     email: null,
     password: null,
-    points: 220,
+    points: 0,
     pointsNeeded: 1000,
     loggedIn: false,
     token: localStorage.getItem("userToken"),
@@ -31,6 +31,8 @@ export const useUserStore = defineStore("user", {
       if (token) {
         this.token = token;
         this.loggedIn = true;
+
+        this.viewTotalPoints();
 
         try {
           const response = await axios.get(
