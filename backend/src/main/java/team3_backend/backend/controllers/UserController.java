@@ -135,13 +135,20 @@ public class UserController {
         return rewardPointService.getTotalRewardPointsForUser(applicationUser);
     }
 
+    @PostMapping("/rewardpoint/addpoints")
+    public RewardPointDTO addPoints(@RequestBody ApplicationUserDTO body){
+        ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
+        int points = body.getPoints();
+        return rewardPointService.addRewardPoints(applicationUser, points);
+    }
+
     @PostMapping("/rewardredemption/view")
     public List<RewardRedemptionDTO> viewRewardRedemption(@RequestBody ApplicationUserDTO body){
         ApplicationUser applicationUser = userRepository.findById(body.getUserId()).get();
         return rewardRedemptionService.getRedemptionRecordsForUser(applicationUser);
     }
 
-    @PostMapping("/rewardeedemption/redemption")
+    @PostMapping("/rewardredemption/redemption")
     public RewardRedemptionDTO redeemRewards(@RequestBody RewardRedemptionDTO body){
         ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return rewardRedemptionService.redeemPoints(applicationUser, body.getItems(), body.getPoint());

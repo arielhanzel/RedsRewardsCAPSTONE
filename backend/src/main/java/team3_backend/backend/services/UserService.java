@@ -71,7 +71,7 @@ public class UserService implements UserDetailsService {
                 user.getEmail(),
                 user.getAuthorities(),
                 null,
-                classType);
+                classType, 0);
     }
 
 
