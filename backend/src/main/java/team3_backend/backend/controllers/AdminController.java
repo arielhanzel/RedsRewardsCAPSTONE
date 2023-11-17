@@ -3,6 +3,7 @@ package team3_backend.backend.controllers;
 
 import java.util.List;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import team3_backend.backend.models.ApplicationUser;
 import team3_backend.backend.models.RegistrationDTO;
 import team3_backend.backend.models_reward.ClassAttendance;
 import team3_backend.backend.models_reward.FitnessClass;
+import team3_backend.backend.models_reward.RewardRedemption;
 import team3_backend.backend.models_reward_dto.ApplicationUserDTO;
 import team3_backend.backend.models_reward_dto.CheckInDTO;
 import team3_backend.backend.models_reward_dto.CheckOutDTO;
@@ -26,6 +28,7 @@ import team3_backend.backend.models_reward_dto.RewardRedemptionDTO;
 import team3_backend.backend.models_reward_dto.UnapprovedRewardDTO;
 import team3_backend.backend.repository.UserRepository;
 import team3_backend.backend.reward_repository.FitnessClassRepository;
+import team3_backend.backend.reward_repository.RewardRedemptionRepository;
 import team3_backend.backend.reward_services.CheckInService;
 import team3_backend.backend.reward_services.CheckOutService;
 import team3_backend.backend.reward_services.ClassAttendanceService;
@@ -78,6 +81,9 @@ public class AdminController {
 
     @Autowired
     private RewardRedemptionService rewardRedemptionService;
+
+    @Autowired
+    private RewardRedemptionRepository rewardRedemptionRepository;
     
 
     @PostMapping("/")
@@ -320,5 +326,13 @@ public class AdminController {
     public RewardRedemptionDTO redeemRewards(@RequestBody RewardRedemptionDTO body){
         ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return rewardRedemptionService.redeemPoints(applicationUser, body.getItems(), body.getPoint());
-    }   
+    }
+    
+    
+     @PostMapping("/rewardredemption/redeemed_items_count")
+        public List<Strings> viewRewardRedemption(@RequestBody RewardRedemptionDTO body){
+        ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
+        List<RewardRedemption> redeemedItems = rewardRedemptionRepository.findByApplicationUser(applicationUser);
+        return rewardRedemptionService.redeemedItemsCount(redeemedItems);
+    }
 }

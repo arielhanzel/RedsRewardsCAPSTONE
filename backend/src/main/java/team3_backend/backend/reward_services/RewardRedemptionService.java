@@ -1,5 +1,6 @@
 package team3_backend.backend.reward_services;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team3_backend.backend.models.ApplicationUser;
@@ -67,6 +68,11 @@ public class RewardRedemptionService {
                                 .map(this::convertToRewardRedemptionDTO)
                                 .collect(Collectors.toList());
     }
+
+    public List<Strings> redeemedItemsCount(List<RewardRedemption> redeemedItems) {
+        return null;
+    }
+
 
     // Helper method to calculate total points for a user might be needed
     // ...

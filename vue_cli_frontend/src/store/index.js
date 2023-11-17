@@ -7,6 +7,7 @@ export const useUserStore = defineStore("user", {
     user: localStorage.getItem("username"),
     email: null,
     password: null,
+    referrer: null,
     points: 0,
     pointsNeeded: 1000,
     loggedIn: false,
@@ -122,10 +123,12 @@ export const useUserStore = defineStore("user", {
       this.user = null;
       this.role = null;
     },
-    signup(username, email, password) {
+    signup(username, email, password, referrer) {
       const userData = {
         username: username,
+        email: email,
         password: password,
+        referrer: referrer,
       };
       const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
       if (username !== "" && password !== "") {
