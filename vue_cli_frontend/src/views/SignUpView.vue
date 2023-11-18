@@ -27,6 +27,12 @@
             />
           </span>
         </div>
+        <input
+          type="text"
+          placeholder="Referrel name"
+          v-model="referrer"
+          required
+        />
         <button type="submit">Sign Up</button>
         <span>
           <br />
@@ -121,8 +127,7 @@ button[type="submit"]:hover {
 
 <script>
 import { ref } from "vue";
-//import { useUserStore } from "@/store";
-import axios from "axios";
+import { useUserStore } from "@/store";
 
 export default {
   data() {
@@ -139,26 +144,14 @@ export default {
         this.passwordType === "password" ? "text" : "password";
     },
     async signup() {
-      //const userStore = useUserStore();
-
-      // Call your store action or API request here
+      const userStore = useUserStore();
       try {
-        const response = await axios.post(
-          "http://localhost:8000/auth/register",
-          {
-            username: this.username,
-            password: this.password,
-            email: this.email,
-            referrer: "admin",
-          }
+        await userStore.signup(
+          this.username,
+          this.email,
+          this.password,
+          this.referrer
         );
-
-        if (response.data) {
-          alert("Sign up successful! Please log in to generate a token.");
-          this.$router.push("/login");
-        } else {
-          alert("Sign up failed.");
-        }
       } catch (error) {
         alert("An error occurred during sign up.");
         console.error("Error during sign up:", error);

@@ -4,15 +4,12 @@ package team3_backend.backend.controllers;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -29,9 +26,8 @@ import team3_backend.backend.services.AuthenticationService;
 
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/auth")
-
+@CrossOrigin("*")
 public class AuthenticationController {
 
     @Autowired
@@ -46,6 +42,34 @@ public class AuthenticationController {
     @Autowired
     private UnapprovedRewardService unapprovedRewardService;
 
+
+
+
+    /*
+     *send {"username":"rajesh100",
+                "password":"password",
+                "email": "rajesh100gmail.com",
+                "referrer":"rajesh2"
+            }
+
+    *response {
+                    "userId": 3202,
+                    "username": "rajesh100",
+                    "password": "$2a$10$Kyqw..ya4gfTYc1QUzyNB.Fe0mb4D/kTTu1FiQhpIITV6hOLyKqwS",
+                    "email": "rajesh100gmail.com",
+                    "fitnessClass": null,
+                    "authorities": [
+                        {
+                            "roleId": 2,
+                            "authority": "USER"
+                        }
+                    ],
+                    "enabled": true,
+                    "accountNonExpired": true,
+                    "credentialsNonExpired": true,
+                    "accountNonLocked": true
+                }
+     */
     @PostMapping("/register")
     @Transactional
     public ApplicationUser registerUser(@RequestBody RegistrationDTO body){
@@ -91,10 +115,35 @@ public class AuthenticationController {
         return savedApplicationUser;
     }
     
+
+
+    /*
+     *send {"username":"admin","password":"password"}
+     *Response will be "{
+    "user": {
+        "userId": 1,
+        "username": "admin",
+        "password": "$2a$10$V/MHnTmBy/GYaJ1mzVjeROx4mTBy3sOKK6wlxNVhQjtwLFV4qL0F2",
+        "email": "admin@gmail.com",
+        "fitnessClass": null,
+        "authorities": [
+            {
+                "roleId": 1,
+                "authority": "ADMIN"
+            }
+        ],
+        "enabled": true,
+        "accountNonExpired": true,
+        "credentialsNonExpired": true,
+        "accountNonLocked": true
+    },
+    "jwt": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE2OTk5NjkxODgsInJvbGVzIjoiQURNSU4ifQ.LzBvfCENov2MfsfwuQuO6zxic1rPSC8ffNV4UG9-MNtUxm93ay0woLB0TW1xwM5nqWxo8tjA3yrbzQc6fX1iVLwvpISpEf3t5AEbKmeaQ-uH3QI03NBLQeRpZUt2iOfbWao2yHeukWnUMyGkwIh6nfrHXFujlqiNikQQeN5hpM1O5KNKMDJF5Nb--nVfjF89bRX3cSe9D8h-ZATFikw26ixn-z1OKafwbucutOwhpNy8p5WL7RwIugW4UPw-fGNJrnmh4BfJR7P3dnBlQAg9eZeGm1423yU9nv_7nRBlpnGnJCLYsp9zwLsFuArLSo_L6c2WaI34vP8ZXR4qWk30QA""
+     
+    Tokenchanges after every logins
+    */
+
     @PostMapping("/login")
     public LoginResponseDTO loginUser(@RequestBody RegistrationDTO body){
         return authenticationService.loginUser(body.getUsername(), body.getPassword());
-
-
     }
-    }   
+}   

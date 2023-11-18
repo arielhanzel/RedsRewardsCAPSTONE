@@ -1,6 +1,7 @@
 package team3_backend.backend.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import team3_backend.backend.models.ApplicationUser;
 import team3_backend.backend.models_reward.FitnessClass;
+import team3_backend.backend.models_reward.RewardRedemption;
 import team3_backend.backend.models_reward_dto.ApplicationUserDTO;
 import team3_backend.backend.models_reward_dto.CheckInDTO;
 import team3_backend.backend.models_reward_dto.CheckOutDTO;
@@ -26,6 +28,7 @@ import team3_backend.backend.models_reward_dto.RewardRedemptionDTO;
 import team3_backend.backend.models_reward_dto.UnapprovedRewardDTO;
 import team3_backend.backend.repository.UserRepository;
 import team3_backend.backend.reward_repository.FitnessClassRepository;
+import team3_backend.backend.reward_repository.RewardRedemptionRepository;
 import team3_backend.backend.reward_services.CheckInService;
 import team3_backend.backend.reward_services.CheckOutService;
 import team3_backend.backend.reward_services.ClassAttendanceService;
@@ -77,6 +80,8 @@ public class UserController {
 
     @Autowired
     private RewardRedemptionService rewardRedemptionService;
+
+    @Autowired RewardRedemptionRepository rewardRedemptionRepository;
 
 
     @GetMapping("/")
@@ -135,13 +140,20 @@ public class UserController {
         return rewardPointService.getTotalRewardPointsForUser(applicationUser);
     }
 
+    @PostMapping("/rewardpoint/addpoints")
+    public RewardPointDTO addPoints(@RequestBody ApplicationUserDTO body){
+        ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
+        int points = body.getPoints();
+        return rewardPointService.addRewardPoints(applicationUser, points);
+    }
+
     @PostMapping("/rewardredemption/view")
     public List<RewardRedemptionDTO> viewRewardRedemption(@RequestBody ApplicationUserDTO body){
         ApplicationUser applicationUser = userRepository.findById(body.getUserId()).get();
         return rewardRedemptionService.getRedemptionRecordsForUser(applicationUser);
     }
 
-    @PostMapping("/rewardeedemption/redemption")
+    @PostMapping("/rewardredemption/redemption")
     public RewardRedemptionDTO redeemRewards(@RequestBody RewardRedemptionDTO body){
         ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return rewardRedemptionService.redeemPoints(applicationUser, body.getItems(), body.getPoint());
@@ -163,6 +175,24 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching user role");
         }
+    }
+
+    @PostMapping("/rewardredemption/redeemed_items_count")
+    public ResponseEntity<?> viewRewardRedemption(@RequestBody RewardRedemptionDTO body) {
+        Optional<ApplicationUser> applicationUserOpt = userRepository.findByUsername(body.getUsername());
+        
+        if (!applicationUserOpt.isPresent()) {
+            // Handle the case where the user is not found
+            return ResponseEntity.notFound().build();
+        }
+
+        ApplicationUser applicationUser = applicationUserOpt.get();
+        List<RewardRedemption> redeemedItems = rewardRedemptionRepository.findByApplicationUser(applicationUser);
+        
+        // Assuming redeemedItemsCount returns a custom object that can be serialized to JSON
+        Object response = rewardRedemptionService.redeemedItemsCount(redeemedItems);
+
+        return ResponseEntity.ok(response);
     }
 
 

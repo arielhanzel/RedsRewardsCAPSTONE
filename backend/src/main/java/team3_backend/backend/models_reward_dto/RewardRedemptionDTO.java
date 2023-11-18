@@ -10,7 +10,9 @@ public class RewardRedemptionDTO {
     private Integer point;
     private LocalDateTime timestamp;
 
-    public RewardRedemptionDTO() {}
+    public RewardRedemptionDTO() {
+        super();
+    }
 
     public RewardRedemptionDTO(Integer purchaseId, String username, String items, Integer point, LocalDateTime timestamp) {
         this.purchaseId = purchaseId;

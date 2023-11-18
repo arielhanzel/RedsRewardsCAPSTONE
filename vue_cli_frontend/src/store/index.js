@@ -4,10 +4,11 @@ import axios from "axios";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
-    user: null,
+    user: localStorage.getItem("username"),
     email: null,
     password: null,
-    points: 220,
+    referrer: null,
+    points: 0,
     pointsNeeded: 1000,
     loggedIn: false,
     token: localStorage.getItem("userToken"),
@@ -31,6 +32,8 @@ export const useUserStore = defineStore("user", {
       if (token) {
         this.token = token;
         this.loggedIn = true;
+
+        this.viewTotalPoints();
 
         try {
           const response = await axios.get(
@@ -120,10 +123,12 @@ export const useUserStore = defineStore("user", {
       this.user = null;
       this.role = null;
     },
-    signup(username, email, password) {
+    signup(username, email, password, referrer) {
       const userData = {
         username: username,
+        email: email,
         password: password,
+        referrer: referrer,
       };
       const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
       if (username !== "" && password !== "") {
@@ -150,11 +155,76 @@ export const useUserStore = defineStore("user", {
         alert("Please fill out all fields");
       }
     },
-    redeemReward(reward) {
+    async addPoints(points) {
+      try {
+        const username = this.user;
+        const token = this.token; // Replace with your actual Bearer token
+
+        // Make a POST request to the endpoint with the username and Bearer token
+        const response = await axios.post(
+          "http://localhost:8000/user/rewardpoint/addpoints",
+          { username: username, points: points },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const addedPoints = response.data;
+        console.log("Added Points:", addedPoints);
+        this.points += addedPoints.pointBalance;
+      } catch (error) {
+        console.error("Error adding points:", error);
+      }
+    },
+    async viewTotalPoints() {
+      try {
+        const username = this.user;
+        const token = this.token;
+
+        // Make a POST request to the endpoint with the username and Bearer token
+        const response = await axios.post(
+          "http://localhost:8000/user/rewardpoint/totalpoints",
+          { username: username },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const totalPoints = response.data;
+        console.log("Total Points:", totalPoints);
+        this.points = totalPoints;
+      } catch (error) {
+        console.error("Error fetching total points:", error);
+      }
+    },
+    async redeemReward(reward) {
       if (this.points >= reward.points) {
-        alert(`You have redeemed a ${reward.name}!`);
-        console.log(`Redeemed: ${reward.name}`);
-        this.points -= reward.points;
+        try {
+          const username = this.user;
+          const token = this.token;
+          const item = reward.name;
+          const points = reward.points;
+
+          // Make a POST request to the endpoint with the username and Bearer token
+          const response = await axios.post(
+            "http://localhost:8000/user/rewardredemption/redemption",
+            { username: username, items: item, point: points },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          alert(`You have redeemed a ${reward.name}!`);
+          console.log("Redeemed:", response.data);
+          this.points -= reward.points;
+        } catch (error) {
+          console.error("Error fetching total points:", error);
+        }
       } else {
         alert(
           `Insufficient points to redeem this reward. You need ${
@@ -162,9 +232,6 @@ export const useUserStore = defineStore("user", {
           } more points.`
         );
       }
-    },
-    addPoints(points) {
-      this.points += points;
     },
     // Define actions here
   },

@@ -39,6 +39,7 @@ export default {
     } else {
       document.title = "Red's Rewards";
     }
+    userStore.viewTotalPoints();
   },
 };
 </script>
