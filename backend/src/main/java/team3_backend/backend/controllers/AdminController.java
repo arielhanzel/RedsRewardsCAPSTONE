@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -284,14 +285,29 @@ public class AdminController {
                 }
      */
     @PostMapping("/registerclass")
-    public ApplicationUserDTO registerClass(@RequestBody ApplicationUserDTO body){
-        ApplicationUserDTO savedApplicationUserDTO = userService.registerClass(body.getUsername(),body.getClassType());
+    public ApplicationUserDTO registerClass(@RequestBody ApplicationUserDTO body) {
+        
+        ApplicationUserDTO savedApplicationUserDTO = userService.addClassToUser(body.getUsername(), body.getClassType());
         ApplicationUser applicationUser = userRepository.findById(savedApplicationUserDTO.getUserId()).get();
-        if(savedApplicationUserDTO != null){
+        if (savedApplicationUserDTO != null) {
             rewardPointService.addRewardPoints(applicationUser, 100);
         }
-        return savedApplicationUserDTO;    
+
+        return savedApplicationUserDTO;
     }
+
+
+
+
+    //To view list of registered classes by a user
+    //Send {"username": "admin"} +jwt token
+    @PostMapping("/registerdclasses")
+    public ResponseEntity<List<FitnessClassDTO>> getUserFitnessClasses(@RequestBody ApplicationUserDTO body) {
+        List<FitnessClassDTO> classes = userService.getFitnessClassesForUser(body.getUsername());
+        return ResponseEntity.ok(classes);
+    }
+
+    
 
 
 

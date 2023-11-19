@@ -2,13 +2,16 @@ package team3_backend.backend.models_reward;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import team3_backend.backend.models.ApplicationUser;
 
 @Entity
 @Table(name = "FitnessClasses")
@@ -24,7 +27,9 @@ public class FitnessClass {
     @Column(nullable = false)
     private LocalTime time;
 
-    
+    @ManyToMany(mappedBy = "fitnessClasses")
+    private List<ApplicationUser> users;
+
 
     public Integer getClassId() {
         return classId;
@@ -49,6 +54,15 @@ public class FitnessClass {
     public void setTime(LocalTime localTime) {
         this.time = localTime;
     }
+
+    public List<ApplicationUser> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<ApplicationUser> users) {
+        this.users = users;
+    }
+
 
     
     // getters, setters, and other methods

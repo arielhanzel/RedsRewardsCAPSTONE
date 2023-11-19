@@ -1,5 +1,6 @@
 package team3_backend.backend.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -12,9 +13,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
 import team3_backend.backend.models.ApplicationUser;
 import team3_backend.backend.models_reward.FitnessClass;
 import team3_backend.backend.models_reward_dto.ApplicationUserDTO;
+import team3_backend.backend.models_reward_dto.FitnessClassDTO;
 import team3_backend.backend.repository.UserRepository;
 import team3_backend.backend.reward_repository.FitnessClassRepository;
 
@@ -39,39 +42,41 @@ public class UserService implements UserDetailsService {
     }
 
    
-    public ApplicationUserDTO registerClass(String username, String classType) {
-        Optional<ApplicationUser> userOptional = userRepository.findByUsername(username);
-        Optional<FitnessClass> fitnessClassOptional = fitnessClassRepository.findByType(classType);
-
-        if (!userOptional.isPresent()) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+    public ApplicationUserDTO addClassToUser(String username, String classType) {
+        ApplicationUser user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    
+        FitnessClass fitnessClass = fitnessClassRepository.findByType(classType)
+            .orElseThrow(() -> new EntityNotFoundException("Class not found with type: " + classType));
+    
+        // Prevent adding the same class multiple times
+        if (!user.getFitnessClasses().contains(fitnessClass)) {
+            user.getFitnessClasses().add(fitnessClass);
         }
-        if (!fitnessClassOptional.isPresent()) {
-            throw new IllegalStateException("Fitness class not found with type: " + classType);
-        }
-
-        ApplicationUser user = userOptional.get();
-
-        FitnessClass fitnessClass = fitnessClassOptional.get();
-        
-        user.setFitnessClass(fitnessClass);
-        ApplicationUser savedUser = userRepository.save(user); // Save the user with the updated FitnessClass
-        
-        return convertToDTO(savedUser); // Return the DTO of the updated user
+    
+        ApplicationUser savedUser = userRepository.save(user);
+    
+        return convertToDTO(savedUser);
     }
 
-    private ApplicationUserDTO convertToDTO(ApplicationUser user) {
+    private ApplicationUserDTO convertToDTO(ApplicationUser savedUser) {
         
         // Assuming that FitnessClass has a getType method and user has getFitnessClass
-        String classType = user.getFitnessClass() != null ? user.getFitnessClass().getType() : null;
+        List<FitnessClass> classInstances = savedUser.getFitnessClasses();
+        List<String> classTypes = new ArrayList<>();  // Initialize the list
+
+        for (FitnessClass fitnessClass : classInstances) {
+            classTypes.add(fitnessClass.getType());  // Add the type to the list
+        }
+        
 
         return new ApplicationUserDTO(
-                user.getUserId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getAuthorities(),
+                savedUser.getUserId(),
+                savedUser.getUsername(),
+                savedUser.getEmail(),
+                savedUser.getAuthorities(),
                 null,
-                classType, 0);
+                classTypes, 0);
     }
 
 
@@ -86,6 +91,23 @@ public class UserService implements UserDetailsService {
         return savedUsers.stream()
                        .map(this::convertToDTO)
                        .collect(Collectors.toList());
+    }
+
+
+    public List<FitnessClassDTO> getFitnessClassesForUser(String username) {
+        ApplicationUser user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    
+        return user.getFitnessClasses().stream()
+                   .map(this::convertToFitnessClassDTO)
+                   .collect(Collectors.toList());
+    }
+    
+    private FitnessClassDTO convertToFitnessClassDTO(FitnessClass fitnessClass) {
+        // Assuming you have a FitnessClassDTO with appropriate fields
+        return new FitnessClassDTO(
+                fitnessClass.getType()
+        );
     }
     
 
