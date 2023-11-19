@@ -106,7 +106,6 @@ public class AdminController {
 
 
 
-
     //User look up via username
     //send {"username":"rajesh"} + jwt Token
     /*response is ApplicationUserDTO in json format, eg. {
