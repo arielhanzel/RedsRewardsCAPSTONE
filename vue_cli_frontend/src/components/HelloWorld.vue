@@ -15,6 +15,11 @@
     <div class="hello">
       <h1 v-if="userStore.loggedIn">Welcome back, {{ storedUsername }}!</h1>
       <h1 v-else>Welcome to Red's Rewards!</h1>
+      <div v-if="userStore.role === 'ADMIN'" class="admin-button">
+        <router-link to="/admin" class="admin-link"
+          >You are logged in as an admin</router-link
+        >
+      </div>
       <p>
         Earn points to redeem exciting rewards!<br />
         Learn more about how to earn points
@@ -128,5 +133,30 @@ a {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.admin-link {
+  display: inline-block;
+  padding: 10px 20px;
+  border-color: #880000;
+  font-weight: bold;
+  font-size: larger;
+  height: 30px;
+  color: white;
+  background-color: #df0000;
+  margin-top: 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.admin-link:hover {
+  color: #df0000;
+  background-color: white;
+}
+
+.admin-link:active {
+  transform: scale(1.1);
 }
 </style>

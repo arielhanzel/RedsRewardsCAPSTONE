@@ -1,10 +1,10 @@
 <template>
   <div class="home">
-    <!-- Use store variables -->
+    <!-- Use store variables 
     <p v-if="user">User: {{ user }}</p>
     <p v-if="email">Email: {{ email }}</p>
     <p v-if="token">Token: {{ token }}</p>
-    <!-- ... and so on -->
+     ... and so on -->
 
     <img alt="Reward logo" src="../assets/reward.png" />
     <HelloWorld msg="Welcome to Red's Rewards!" />
