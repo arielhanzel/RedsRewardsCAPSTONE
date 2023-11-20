@@ -13,6 +13,10 @@ export const useUserStore = defineStore("user", {
     loggedIn: false,
     token: localStorage.getItem("userToken"),
     role: null,
+    redeemed1: 0,
+    redeemed2: 0,
+    redeemed3: 0,
+    redeemed4: 0,
   }),
   getters: {
     progressPercentage() {
@@ -222,6 +226,7 @@ export const useUserStore = defineStore("user", {
           alert(`You have redeemed a ${reward.name}!`);
           console.log("Redeemed:", response.data);
           this.points -= reward.points;
+          ++reward.count;
         } catch (error) {
           console.error("Error fetching total points:", error);
         }
@@ -231,6 +236,48 @@ export const useUserStore = defineStore("user", {
             reward.points - this.points
           } more points.`
         );
+      }
+    },
+    async viewRedeemCount() {
+      try {
+        const username = this.user;
+        const token = this.token;
+
+        // Make a POST request to the endpoint with the username and Bearer token
+        const response = await axios.post(
+          "http://localhost:8000/user/rewardredemption/redeemed_items_count",
+          { username: username },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const redeemed = response.data;
+        console.log("Rewards Redeemed:", redeemed);
+        if (redeemed["Red's T-shirt"]) {
+          this.redeemed1 = redeemed["Red's T-shirt"];
+        } else {
+          this.redeemed1 = 0;
+        }
+        if (redeemed["Free Drink/Snack"]) {
+          this.redeemed2 = redeemed["Free Drink/Snack"];
+        } else {
+          this.redeemed2 = 0;
+        }
+        if (redeemed["Free Personal Training"]) {
+          this.redeemed3 = redeemed["Free Personal Training"];
+        } else {
+          this.redeemed3 = 0;
+        }
+        if (redeemed["Membership Fee Waived for One Month"]) {
+          this.redeemed4 = redeemed["Membership Fee Waived for One Month"];
+        } else {
+          this.redeemed4 = 0;
+        }
+      } catch (error) {
+        console.error("Error fetching redeemed counts:", error);
       }
     },
     // Define actions here

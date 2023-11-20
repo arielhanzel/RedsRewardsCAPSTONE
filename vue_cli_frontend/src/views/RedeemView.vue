@@ -2,12 +2,12 @@
   <div class="rewards-page">
     <div class="rewards-header">
       <h1>
-        You Have <span class="point-value">{{ useStore.points }}</span> points!
+        You Have <span class="point-value">{{ userStore.points }}</span> points!
       </h1>
     </div>
     <!-- Add points for testing -->
-    <button @click="useStore.addPoints(100)">Add Points</button>
-    <button @click="useStore.viewTotalPoints()">View Points</button>
+    <button @click="userStore.addPoints(100)">Add Points</button>
+    <button @click="userStore.viewRedeemCount()">View Redeem Count</button>
 
     <div class="rewards-list">
       <div class="reward-item" v-for="(reward, index) in rewards" :key="index">
@@ -19,10 +19,11 @@
             <p>
               <strong>{{ reward.points }}</strong> points
             </p>
+            <p>Redeemed: {{ reward.count }}</p>
             <button
-              @click="useStore.redeemReward(reward)"
-              :class="{ 'disabled-button': useStore.points < reward.points }"
-              :disabled="useStore.points < reward.points"
+              @click="userStore.redeemReward(reward)"
+              :class="{ 'disabled-button': userStore.points < reward.points }"
+              :disabled="userStore.points < reward.points"
             >
               Redeem
             </button>
@@ -34,56 +35,69 @@
 </template>
 
 <script>
+import { useUserStore } from "@/store";
+import { ref, onMounted } from "vue";
+
 export default {
-  data() {
-    return {
-      points: 500,
-      rewards: [
-        {
-          name: "Red's T-shirt",
-          points: 200,
-          description: "Get a free T-shirt!",
-          image:
-            "https://since99vintage.com/cdn/shop/products/image_258328be-b4fa-4fe8-9a90-93edf98cb604_530x@2x.jpg?v=1626282065",
-        },
-        {
-          name: "Free Drink/Snack",
-          points: 400,
-          description: "Get a free drink or snack of your choice!",
-          image:
-            "https://i.pinimg.com/736x/d2/55/de/d255dee2aff589cf202838f91c4cdb07.jpg",
-        },
-        {
-          name: "Free Personal Training",
-          points: 750,
-          description: "Get a free 30-minute personal training session!",
-          image:
-            "https://img.freepik.com/premium-vector/personal-training-fitness-male-coach-bodybuilder-cartoon-training-workout-vector-concept_53562-15548.jpg",
-        },
-        {
-          name: "Membership Fee Waived for One Month",
-          points: 1000,
-          description: "Enjoy paying no membership fees for one month!",
-          image:
-            "https://thumbs.dreamstime.com/b/vector-illstration-no-cash-icon-flat-design-vector-illstration-no-cash-icon-flat-design-isolated-170514654.jpg",
-        },
-        // Add more reward items here
-      ],
+  setup() {
+    const userStore = useUserStore();
+
+    const rewards = ref([
+      {
+        name: "Red's T-shirt",
+        points: 200,
+        description: "Get a free T-shirt!",
+        count: 0,
+        image:
+          "https://since99vintage.com/cdn/shop/products/image_258328be-b4fa-4fe8-9a90-93edf98cb604_530x@2x.jpg?v=1626282065",
+      },
+      {
+        name: "Free Drink/Snack",
+        points: 400,
+        description: "Get a free drink or snack of your choice!",
+        count: 0,
+        image:
+          "https://i.pinimg.com/736x/d2/55/de/d255dee2aff589cf202838f91c4cdb07.jpg",
+      },
+      {
+        name: "Free Personal Training",
+        points: 750,
+        description: "Get a free 30-minute personal training session!",
+        count: 0,
+        image:
+          "https://img.freepik.com/premium-vector/personal-training-fitness-male-coach-bodybuilder-cartoon-training-workout-vector-concept_53562-15548.jpg",
+      },
+      {
+        name: "Membership Fee Waived for One Month",
+        points: 1000,
+        description: "Enjoy paying no membership fees for one month!",
+        count: 0,
+        image:
+          "https://thumbs.dreamstime.com/b/vector-illstration-no-cash-icon-flat-design-vector-illstration-no-cash-icon-flat-design-isolated-170514654.jpg",
+      },
+      // Add more reward items here
+    ]);
+
+    // Define the initialization logic
+    const initializeData = async () => {
+      await userStore.viewRedeemCount();
+      userStore.viewTotalPoints();
+      rewards.value[0].count = userStore.redeemed1;
+      rewards.value[1].count = userStore.redeemed2;
+      rewards.value[2].count = userStore.redeemed3;
+      rewards.value[3].count = userStore.redeemed4;
     };
-  },
-  mounted() {
-    document.title = "Red's Rewards - Redeem";
+
+    // Handle mounting logic using onMounted
+    onMounted(() => {
+      initializeData();
+      document.title = "Red's Rewards - Redeem";
+    });
+
+    // Expose variables and methods to the template
+    return { userStore, rewards, initializeData };
   },
 };
-</script>
-
-<script setup>
-import { onMounted } from "vue";
-import { useUserStore } from "@/store";
-const useStore = useUserStore();
-onMounted(() => {
-  useStore.viewTotalPoints();
-});
 </script>
 
 <style scoped>
