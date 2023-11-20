@@ -13,6 +13,7 @@ public class ApplicationUserDTO {
     Collection<? extends GrantedAuthority> roles;  // assuming the Role has a String representation (like role name)
     private String classType;
     private String registeredClass;
+    private int points;
 
 
     public ApplicationUserDTO() {
@@ -20,13 +21,14 @@ public class ApplicationUserDTO {
         super();
     }
 
-    public ApplicationUserDTO(Integer userId, String username, String email, Collection<? extends GrantedAuthority> roles, String classType, String registeredClass) {
+    public ApplicationUserDTO(Integer userId, String username, String email, Collection<? extends GrantedAuthority> roles, String classType, String registeredClass, int points) {
         this.userId = userId;
         this.username = username;
         this.email = email;
         this.roles = roles;
         this.classType = classType;
         this.registeredClass = registeredClass;
+        this.points = points;
     }
 
     // getters and setters
@@ -76,6 +78,14 @@ public class ApplicationUserDTO {
 
     public void setRegisteredClass(String registeredClass) {
         this.registeredClass = registeredClass;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 
     // You can also override the toString(), equals(), and hashCode() methods if needed.

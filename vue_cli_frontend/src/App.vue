@@ -19,6 +19,9 @@
       @mouseleave="isCursorOverMenu = false"
       @click="toggleMenu(false)"
     >
+      <router-link to="/apicalls" v-if="useStore.role === 'ADMIN'"
+        >ApiCalls</router-link
+      >
       <router-link to="/">Home</router-link>
       <router-link to="/profile">Profile</router-link>
       <router-link to="/admin" v-if="useStore.role === 'ADMIN'"

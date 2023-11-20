@@ -5,7 +5,11 @@ import LoginView from "../views/LoginView.vue";
 import SignUpView from "../views/SignUpView.vue";
 import RedeemView from "../views/RedeemView.vue";
 import AdminView from "../views/AdminView.vue";
+<<<<<<< HEAD
 import ProfilePageView from "../views/ProfilePageView.vue";
+=======
+import ApiCalls from "../views/ApiCalls.vue";
+>>>>>>> 05623a4eeea6b51ee14f449380fe5e68185fc87c
 import { useUserStore } from "@/store";
 
 const routes = [
@@ -44,9 +48,15 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
+<<<<<<< HEAD
     path: "/profile",
     name: "profile",
     component: ProfilePageView,
+=======
+    path: "/apicalls",
+    name: "apicalls",
+    component: ApiCalls,
+>>>>>>> 05623a4eeea6b51ee14f449380fe5e68185fc87c
   },
 ];
 

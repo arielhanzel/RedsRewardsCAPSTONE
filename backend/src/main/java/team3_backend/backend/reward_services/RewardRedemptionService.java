@@ -1,5 +1,6 @@
 package team3_backend.backend.reward_services;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team3_backend.backend.models.ApplicationUser;
@@ -9,7 +10,9 @@ import team3_backend.backend.reward_repository.RewardPointRepository;
 import team3_backend.backend.reward_repository.RewardRedemptionRepository;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,6 +70,18 @@ public class RewardRedemptionService {
                                 .map(this::convertToRewardRedemptionDTO)
                                 .collect(Collectors.toList());
     }
+
+    public Map<String, Integer> redeemedItemsCount(List<RewardRedemption> redeemedItems) {
+        Map<String, Integer> itemCounts = new HashMap<>();
+
+        for (RewardRedemption item : redeemedItems) {
+            String itemName = item.getItems(); // Assuming getItems() returns the name of the item
+            itemCounts.put(itemName, itemCounts.getOrDefault(itemName, 0) + 1);
+        }
+
+        return itemCounts;
+    }
+
 
     // Helper method to calculate total points for a user might be needed
     // ...

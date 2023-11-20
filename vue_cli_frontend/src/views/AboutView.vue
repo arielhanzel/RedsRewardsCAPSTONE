@@ -29,6 +29,7 @@
             >
           </div>
         </li>
+
         <li data-tooltip="closed">
           <div>
             Checking-in to the gym
