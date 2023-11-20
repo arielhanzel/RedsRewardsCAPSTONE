@@ -20,11 +20,13 @@
       @click="toggleMenu(false)"
     >
       <router-link to="/">Home</router-link>
+      <router-link to="/profile">Profile</router-link>
       <router-link to="/admin" v-if="useStore.role === 'ADMIN'"
         >Admin</router-link
       >
 
       <router-link to="/about">About</router-link>
+
       <router-link
         v-if="useStore.token && useStore.token != 'null'"
         to="/redeem"
