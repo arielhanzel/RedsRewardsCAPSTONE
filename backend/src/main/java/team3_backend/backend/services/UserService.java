@@ -1,5 +1,6 @@
 package team3_backend.backend.services;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
 import team3_backend.backend.models.ApplicationUser;
 import team3_backend.backend.models_reward.FitnessClass;
 import team3_backend.backend.models_reward_dto.ApplicationUserDTO;
@@ -40,30 +42,22 @@ public class UserService implements UserDetailsService {
 
    
     public ApplicationUserDTO registerClass(String username, String classType) {
-        Optional<ApplicationUser> userOptional = userRepository.findByUsername(username);
-        Optional<FitnessClass> fitnessClassOptional = fitnessClassRepository.findByType(classType);
 
-        if (!userOptional.isPresent()) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
-        if (!fitnessClassOptional.isPresent()) {
-            throw new IllegalStateException("Fitness class not found with type: " + classType);
-        }
 
-        ApplicationUser user = userOptional.get();
+        ApplicationUser user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found!"));
+        FitnessClass fitnessClass = fitnessClassRepository.findByType(classType)
+                .orElseThrow(() -> new EntityNotFoundException("FitnessClass not found!"));
 
-        FitnessClass fitnessClass = fitnessClassOptional.get();
+        // Add the fitness class to the user's set of fitness classes
+        user.getFitnessClasses().add(fitnessClass);
         
-        user.setFitnessClass(fitnessClass);
-        ApplicationUser savedUser = userRepository.save(user); // Save the user with the updated FitnessClass
+        // Save the updated user
         
-        return convertToDTO(savedUser); // Return the DTO of the updated user
+        return convertToDTO( userRepository.save(user)); // Return the DTO of the updated user
     }
 
     private ApplicationUserDTO convertToDTO(ApplicationUser user) {
-        
-        // Assuming that FitnessClass has a getType method and user has getFitnessClass
-        String classType = user.getFitnessClass() != null ? user.getFitnessClass().getType() : null;
 
         return new ApplicationUserDTO(
                 user.getUserId(),
@@ -71,7 +65,7 @@ public class UserService implements UserDetailsService {
                 user.getEmail(),
                 user.getAuthorities(),
                 null,
-                classType, 0);
+                null, 0);
     }
 
 
@@ -87,7 +81,6 @@ public class UserService implements UserDetailsService {
                        .map(this::convertToDTO)
                        .collect(Collectors.toList());
     }
-    
 
 }
 

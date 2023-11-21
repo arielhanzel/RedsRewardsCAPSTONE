@@ -61,6 +61,29 @@
           </tbody>
         </table>
       </div>
+
+      <form @submit.prevent="deleteFitnessClass" class="add-class-form">
+        <input
+          type="text"
+          v-model="newClass.type"
+          placeholder="Class Type (e.g., Yoga)"
+        />
+        <button type="submit" :class="{ 'red-button': newClass.type }">
+          Delete Class
+        </button>
+      </form>
+
+      <form @submit.prevent="registerFitnessClass" class="add-class-form">
+        <input type="text" v-model="username" placeholder="Customer name" />
+        <input
+          type="text"
+          v-model="classType"
+          placeholder="Class Type (e.g., Yoga)"
+        />
+        <button type="submit" :class="{ 'red-button': newClass.type }">
+          register Fitness Class for a User
+        </button>
+      </form>
     </div>
 
     <div class="section">
@@ -95,6 +118,7 @@
 <script>
 import axios from "axios";
 import { useUserStore } from "@/store/index";
+import router from "../router";
 
 export default {
   data() {

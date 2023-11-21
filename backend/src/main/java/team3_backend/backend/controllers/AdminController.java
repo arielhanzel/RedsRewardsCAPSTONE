@@ -1,6 +1,7 @@
 package team3_backend.backend.controllers;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -232,6 +234,14 @@ public class AdminController {
 
 
 
+    @PostMapping("/fitnessclass/delete")
+    public String deleteFitnessClass(@RequestBody FitnessClassDTO body) {
+        FitnessClass fitnessClass = fitnessClassRepository.findByType(body.getType()).get();
+        return fitnessClassService.deleteFitnessClass(fitnessClass.getClassId());
+    }
+
+
+
 
 
 
@@ -294,7 +304,21 @@ public class AdminController {
         return savedApplicationUserDTO;    
     }
 
+    @PostMapping("/registeredclasses")
+    public List<String> registeredClasses(@RequestBody ApplicationUserDTO body) {
+    ApplicationUser user = userRepository.findByUsername(body.getUsername()).get();
+    List<FitnessClass> registeredClasses = user.getFitnessClasses();
 
+    // Initialize the classes list outside the loop
+    List<String> classes = new ArrayList<>();
+
+    // Loop through each registered class and add its type to the classes list
+    for (FitnessClass registeredClass : registeredClasses) {
+        classes.add(registeredClass.getType());
+    }
+
+    return classes;
+}
 
 
 
@@ -431,7 +455,7 @@ public class AdminController {
 
 
     //Allready implemented while registering a new user from authentication service
-    //this is automated while user register with referrer name abd point will be added to referrer in unapprovedpoints database
+    //this is automated while user register with referrer name add point will be added to referrer in unapprovedpoints database
     @PostMapping("/referrer/addPoints")
     public RewardPointDTO addPointsReferrer(@RequestBody ApplicationUserDTO body){
         return rewardPointService.addPointsReferrer(body.getUsername());
@@ -591,6 +615,13 @@ public class AdminController {
         ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return rewardPointService.getTotalRewardPointsForUser(applicationUser);
     }
+
+
+
+
+
+
+    
 
     //to view approved reward point of all users from reward point database
     //send jwt token

@@ -1,6 +1,7 @@
 package team3_backend.backend.models_reward_dto;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -12,22 +13,22 @@ public class ApplicationUserDTO {
     private String email;
     Collection<? extends GrantedAuthority> roles;  // assuming the Role has a String representation (like role name)
     private String classType;
-    private String registeredClass;
     private int points;
-
+    private List<Integer> classIds;
+    private List<String> classTypes;
 
     public ApplicationUserDTO() {
         // default constructor
         super();
     }
 
-    public ApplicationUserDTO(Integer userId, String username, String email, Collection<? extends GrantedAuthority> roles, String classType, String registeredClass, int points) {
+    public ApplicationUserDTO(Integer userId, String username, String email, Collection<? extends GrantedAuthority> roles, String classType, List<String> classTypes, int points) {
         this.userId = userId;
         this.username = username;
         this.email = email;
         this.roles = roles;
         this.classType = classType;
-        this.registeredClass = registeredClass;
+        this.classTypes =classTypes;
         this.points = points;
     }
 
@@ -72,13 +73,6 @@ public class ApplicationUserDTO {
         this.classType = classType;
     }
 
-    public String getRegisteredClass() {
-        return registeredClass;
-    }
-
-    public void setRegisteredClass(String registeredClass) {
-        this.registeredClass = registeredClass;
-    }
 
     public int getPoints() {
         return points;
@@ -86,6 +80,22 @@ public class ApplicationUserDTO {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public List<Integer> getClassIds() {
+        return classIds;
+    }
+
+    public void setClassIds(List<Integer> classIds) {
+        this.classIds = classIds;
+    }
+
+    public List<String> getClassTypes() {
+        return classTypes;
+    }
+
+    public void setClassTypes(List<String> classTypes) {
+        this.classTypes = classTypes;
     }
 
     // You can also override the toString(), equals(), and hashCode() methods if needed.

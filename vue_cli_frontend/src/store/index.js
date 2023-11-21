@@ -94,7 +94,7 @@ export const useUserStore = defineStore("user", {
           userData
         );
 
-        if (response.data.user != null) {
+        if (response.data != null) {
           this.token = response.data.jwt;
           localStorage.setItem("userToken", response.data.jwt);
           this.user = username;
@@ -102,10 +102,10 @@ export const useUserStore = defineStore("user", {
           this.loggedIn = true;
 
           if (
-            response.data.user.authorities &&
-            response.data.user.authorities.length > 0
+            response.data.role[0].authority &&
+            response.data.role[0].authority.length > 0
           ) {
-            this.role = response.data.user.authorities[0].authority;
+            this.role = response.data.role[0].authority;
           } else {
             console.error("No authorities found for user");
           }

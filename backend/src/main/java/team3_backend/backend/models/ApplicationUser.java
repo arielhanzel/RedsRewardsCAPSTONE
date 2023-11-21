@@ -2,6 +2,7 @@ package team3_backend.backend.models;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -34,11 +35,6 @@ public class ApplicationUser implements UserDetails{
 	@Column(unique=true)
 	private String email;
 	
-	@ManyToOne
-    @JoinColumn(name = "classId", nullable = true)
-    private FitnessClass fitnessClass;
-
-
 	@ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
         name="user_role_junction",
@@ -46,6 +42,16 @@ public class ApplicationUser implements UserDetails{
         inverseJoinColumns = {@JoinColumn(name="role_id")}
     )
     private Set<Role> authorities;
+	
+
+	@ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_fitness_class",
+        joinColumns = {@JoinColumn(name = "user_id")},
+        inverseJoinColumns = {@JoinColumn(name = "class_id")}
+    )
+    private List<FitnessClass> fitnessClasses;
+    
 
     public ApplicationUser() {
 		super();
@@ -60,6 +66,7 @@ public class ApplicationUser implements UserDetails{
 		this.password = password;
 		this.authorities = authorities;
 		this.email = email;
+
 	}
 
     public Integer getUserId() {
@@ -109,14 +116,14 @@ public class ApplicationUser implements UserDetails{
 		this.email = email;
 	}
 
-	public FitnessClass getFitnessClass() {
-		return fitnessClass;
-	}
+    // Getters and setters for fitnessClasses
+    public List<FitnessClass> getFitnessClasses() {
+        return fitnessClasses;
+    }
 
-
-	public void setFitnessClass(FitnessClass fitnessClass) {
-		this.fitnessClass = fitnessClass;
-	}
+    public void setFitnessClasses(List<FitnessClass> fitnessClasses) {
+        this.fitnessClasses = fitnessClasses;
+    }
 	
 	/* If you want account locking capabilities create variables and ways to set them for the methods below */
 	@Override

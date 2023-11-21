@@ -95,19 +95,21 @@ public class UserController {
         return userService.userView(body.getUsername());
     } 
 
+   
+
+    @PostMapping("/fitnessclass")
+    public List<FitnessClassDTO> fitnessClass() {
+        return fitnessClassService.getAllFitnessClasses();
+    }
+
     @PostMapping("/registerclass")
     public ApplicationUserDTO registerClass(@RequestBody ApplicationUserDTO body){
         ApplicationUserDTO savedApplicationUserDTO = userService.registerClass(body.getUsername(),body.getClassType());
         ApplicationUser applicationUser = userRepository.findById(savedApplicationUserDTO.getUserId()).get();
         if(savedApplicationUserDTO != null){
-            unapprovedRewardService.addUnapprovedReward(applicationUser, 100);
+            rewardPointService.addRewardPoints(applicationUser, 100);
         }
         return savedApplicationUserDTO;    
-    }
-
-    @PostMapping("/fitnessclass")
-    public List<FitnessClassDTO> fitnessClass() {
-        return fitnessClassService.getAllFitnessClasses();
     }
 
 
