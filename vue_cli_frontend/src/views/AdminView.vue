@@ -54,10 +54,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="fitnessClass in fitnessClasses"
-              :key="fitnessClass.classId"
-            >
+            <tr v-for="fitnessClass in fitnessClasses" :key="fitnessClass.id">
               <td>{{ fitnessClass.classId }}</td>
               <td>{{ fitnessClass.type }}</td>
             </tr>
@@ -90,8 +87,25 @@
     </div>
 
     <div class="section">
-      <h1>Email Management</h1>
-      <p>Placeholder for now <a href="#">Access Emails</a></p>
+      <h1>Reward Points Overview</h1>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Date/Time</th>
+              <th>Points Earned</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="user in rewardPoints" :key="user.userId">
+              <td>{{ user.username }}</td>
+              <td>{{ user.timestamp }}</td>
+              <td>{{ user.pointsEarned }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="section">
@@ -115,6 +129,7 @@ export default {
       newClass: {
         type: "",
       },
+      rewardPoints: [],
     };
   },
   computed: {
@@ -155,6 +170,7 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+
     deleteFitnessClass() {
       const userStore = useUserStore();
       if (this.newClass.type.trim() === "") {
@@ -172,6 +188,24 @@ export default {
         .then((response) => {
           alert(response.data);
           router.push("/home");
+        })
+        .catch((error) => console.log(error));
+    },
+
+    fetchRewardPoints() {
+      const userStore = useUserStore();
+      axios
+        .post("http://localhost:8000/admin/rewardpoint/allview", null, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then((response) => {
+          this.rewardPoints = response.data.map((point) => {
+            return {
+              username: point.username,
+              timestamp: new Date(point.timestamp).toLocaleString(),
+              pointsEarned: point.pointBalance,
+            };
+          });
         })
         .catch((error) => console.log(error));
     },
@@ -198,6 +232,7 @@ export default {
         console.log(error);
       });
     this.fetchFitnessClasses();
+    this.fetchRewardPoints();
   },
 };
 </script>

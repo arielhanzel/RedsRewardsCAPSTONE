@@ -14,30 +14,38 @@
     </div>
     <div class="hello">
       <h1 v-if="userStore.loggedIn">Welcome back, {{ storedUsername }}!</h1>
-
       <h1 v-else>Welcome to Red's Rewards!</h1>
-
+      <div v-if="userStore.role === 'ADMIN'" class="admin-button">
+        <router-link to="/admin" class="admin-link"
+          >You are logged in as an admin</router-link
+        >
+      </div>
       <p>
         Earn points to redeem exciting rewards!<br />
         Learn more about how to earn points
         <router-link to="/about">here</router-link>.
       </p>
 
-      <div v-if="userStore.loggedIn" class="gamification">
-        <div class="points">
-          <span>Points: {{ userStore.points }}</span>
-        </div>
-        <div class="progress-bar">
-          <div
-            class="progress"
-            :style="{ width: userStore.progressPercentage + '%' }"
-          ></div>
-        </div>
-        <div>
-          <span>
-            {{ userStore.pointsToGoal }} points until your next reward
-            unlock!</span
-          >
+      <div
+        v-if="userStore.loggedIn && userPoints.length > 0"
+        class="user-points-section"
+      >
+        <h2>Your Reward Points History</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Points Earned</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="point in userPoints" :key="point.pointId">
+                <td>{{ new Date(point.timestamp).toLocaleDateString() }}</td>
+                <td>{{ point.pointBalance }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -45,8 +53,9 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useUserStore } from "@/store";
+import axios from "axios";
 
 const userStore = useUserStore();
 
@@ -64,6 +73,32 @@ const onVideoEnded = () => {
 };
 
 const storedUsername = localStorage.getItem("username");
+
+const userPoints = ref([]);
+
+onMounted(async () => {
+  if (userStore.loggedIn) {
+    await fetchUserPoints();
+  }
+});
+
+const fetchUserPoints = async () => {
+  try {
+    const username = userStore.user;
+    const token = userStore.token;
+    console.log("Token:", token);
+    const url = `http://localhost:8000/user/rewardpoints/by-username/${username}`;
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    userPoints.value = response.data;
+  } catch (error) {
+    console.error("Failed to fetch user points:", error);
+    alert("Failed to fetch points");
+  }
+};
 </script>
 
 <style scoped>
@@ -71,6 +106,10 @@ const storedUsername = localStorage.getItem("username");
   position: relative;
   z-index: 1;
   background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 h3 {
@@ -90,30 +129,6 @@ li {
 a {
   color: rgb(255, 0, 0);
 }
-.gamification {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.points {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.progress-bar {
-  width: 80%;
-  background-color: #eee;
-  margin: 10px auto;
-  border-radius: 10px;
-  height: 20px;
-  overflow: hidden;
-}
-
-.progress {
-  height: 100%;
-  background-color: #4caf50;
-  transition: width 0.3s ease-in-out;
-}
 
 #video-container {
   position: fixed;
@@ -130,5 +145,96 @@ a {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.admin-link {
+  display: inline-block;
+  padding: 10px 20px;
+  border-color: #880000;
+  font-weight: bold;
+  font-size: larger;
+  height: 30px;
+  color: white;
+  background-color: #df0000;
+  margin-top: 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.admin-link:hover {
+  color: #df0000;
+  background-color: white;
+}
+
+.admin-link:active {
+  transform: scale(1.1);
+}
+
+.user-points-section {
+  position: relative;
+  border-radius: 12px;
+  padding: 40px;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+  max-width: 400px;
+  width: 100%;
+  background: linear-gradient(135deg, #f5f7fa, #eef2f7);
+  border: 1px solid #e1e8ed;
+}
+
+.user-points-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.user-points-section h2 {
+  color: #880000;
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+
+.table-container {
+  max-height: 185px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table,
+th,
+td {
+  border: 1px solid #ddd;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  background-color: #880000;
+  color: white;
+}
+
+td {
+  color: black;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
 }
 </style>
