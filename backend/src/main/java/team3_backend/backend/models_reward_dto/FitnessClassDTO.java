@@ -10,6 +10,10 @@ public class FitnessClassDTO {
 
     public FitnessClassDTO() {}
 
+    public FitnessClassDTO(String type) {
+        this.type = type;
+    }
+
     public FitnessClassDTO(Integer classId, String type, LocalTime time) {
         this.classId = classId;
         this.type = type;

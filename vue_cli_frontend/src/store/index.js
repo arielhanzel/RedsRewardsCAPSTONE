@@ -17,6 +17,7 @@ export const useUserStore = defineStore("user", {
     redeemed2: 0,
     redeemed3: 0,
     redeemed4: 0,
+    initializing: false,
   }),
   getters: {
     progressPercentage() {
@@ -31,6 +32,7 @@ export const useUserStore = defineStore("user", {
       localStorage.setItem("userToken", token);
     },
     async initializeUser() {
+      this.initializing = true;
       const token = localStorage.getItem("userToken");
 
       if (token) {
@@ -56,6 +58,8 @@ export const useUserStore = defineStore("user", {
         } catch (error) {
           console.error("Error fetching user data:", error);
           // Handle errors, e.g., by logging out the user
+        } finally {
+          this.initializing = false;
         }
       }
     },
@@ -90,7 +94,7 @@ export const useUserStore = defineStore("user", {
           userData
         );
 
-        if (response.data.user != null) {
+        if (response.data != null) {
           this.token = response.data.jwt;
           localStorage.setItem("userToken", response.data.jwt);
           this.user = username;
@@ -98,10 +102,10 @@ export const useUserStore = defineStore("user", {
           this.loggedIn = true;
 
           if (
-            response.data.user.authorities &&
-            response.data.user.authorities.length > 0
+            response.data.role[0].authority &&
+            response.data.role[0].authority.length > 0
           ) {
-            this.role = response.data.user.authorities[0].authority;
+            this.role = response.data.role[0].authority;
           } else {
             console.error("No authorities found for user");
           }
