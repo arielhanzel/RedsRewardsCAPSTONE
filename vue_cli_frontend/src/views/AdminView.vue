@@ -76,7 +76,7 @@
         </button>
       </form>
 
-      <form @submit.prevent="deleteFitnessClass" class="add-class-form">
+      <form @submit.prevent="registerFitnessClass" class="add-class-form">
         <input type="text" v-model="username" placeholder="Customer name" />
         <input
           type="text"
@@ -84,7 +84,7 @@
           placeholder="Class Type (e.g., Yoga)"
         />
         <button type="submit" :class="{ 'red-button': newClass.type }">
-          register Class
+          register Fitness Class for a User
         </button>
       </form>
     </div>
@@ -171,7 +171,7 @@ export default {
         )
         .then((response) => {
           alert(response.data);
-          router.push("/admin");
+          router.push("/home");
         })
         .catch((error) => console.log(error));
     },

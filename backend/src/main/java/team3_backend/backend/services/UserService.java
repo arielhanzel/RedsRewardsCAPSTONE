@@ -81,7 +81,6 @@ public class UserService implements UserDetailsService {
                        .map(this::convertToDTO)
                        .collect(Collectors.toList());
     }
-    
 
 }
 

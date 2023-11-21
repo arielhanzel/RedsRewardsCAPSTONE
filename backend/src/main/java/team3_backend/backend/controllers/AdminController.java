@@ -1,6 +1,7 @@
 package team3_backend.backend.controllers;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -302,7 +304,21 @@ public class AdminController {
         return savedApplicationUserDTO;    
     }
 
+    @PostMapping("/registeredclasses")
+    public List<String> registeredClasses(@RequestBody ApplicationUserDTO body) {
+    ApplicationUser user = userRepository.findByUsername(body.getUsername()).get();
+    List<FitnessClass> registeredClasses = user.getFitnessClasses();
 
+    // Initialize the classes list outside the loop
+    List<String> classes = new ArrayList<>();
+
+    // Loop through each registered class and add its type to the classes list
+    for (FitnessClass registeredClass : registeredClasses) {
+        classes.add(registeredClass.getType());
+    }
+
+    return classes;
+}
 
 
 

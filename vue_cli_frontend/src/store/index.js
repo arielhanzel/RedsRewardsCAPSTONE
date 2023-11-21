@@ -14,6 +14,7 @@ export const useUserStore = defineStore("user", {
     loggedIn: false,
     token: localStorage.getItem("userToken"),
     role: null,
+    registeredClasses: null,
   }),
   getters: {
     progressPercentage() {
