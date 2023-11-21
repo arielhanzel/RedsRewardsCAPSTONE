@@ -54,13 +54,39 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="fitnessClass in fitnessClasses" :key="fitnessClass.id">
-              <td>{{ fitnessClass.id }}</td>
+            <tr
+              v-for="fitnessClass in fitnessClasses"
+              :key="fitnessClass.classId"
+            >
+              <td>{{ fitnessClass.classId }}</td>
               <td>{{ fitnessClass.type }}</td>
             </tr>
           </tbody>
         </table>
       </div>
+
+      <form @submit.prevent="deleteFitnessClass" class="add-class-form">
+        <input
+          type="text"
+          v-model="newClass.type"
+          placeholder="Class Type (e.g., Yoga)"
+        />
+        <button type="submit" :class="{ 'red-button': newClass.type }">
+          Delete Class
+        </button>
+      </form>
+
+      <form @submit.prevent="deleteFitnessClass" class="add-class-form">
+        <input type="text" v-model="username" placeholder="Customer name" />
+        <input
+          type="text"
+          v-model="classType"
+          placeholder="Class Type (e.g., Yoga)"
+        />
+        <button type="submit" :class="{ 'red-button': newClass.type }">
+          register Class
+        </button>
+      </form>
     </div>
 
     <div class="section">
@@ -78,6 +104,7 @@
 <script>
 import axios from "axios";
 import { useUserStore } from "@/store/index";
+import router from "../router";
 
 export default {
   data() {
@@ -125,6 +152,26 @@ export default {
         .then((response) => {
           this.fitnessClasses.push(response.data);
           this.newClass.type = "";
+        })
+        .catch((error) => console.log(error));
+    },
+    deleteFitnessClass() {
+      const userStore = useUserStore();
+      if (this.newClass.type.trim() === "") {
+        alert("Please enter a class type.");
+        return;
+      }
+      axios
+        .post(
+          "http://localhost:8000/admin/fitnessclass/delete",
+          this.newClass,
+          {
+            headers: { Authorization: `Bearer ${userStore.token}` },
+          }
+        )
+        .then((response) => {
+          alert(response.data);
+          router.push("/admin");
         })
         .catch((error) => console.log(error));
     },

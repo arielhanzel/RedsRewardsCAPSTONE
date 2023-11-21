@@ -52,7 +52,7 @@
     </nav>
   </div>
   <!-- <p>Token: {{ useStore.token }}</p> -->
-  <router-view />
+  <router-view />  
 </template>
 
 <script>

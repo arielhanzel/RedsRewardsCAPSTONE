@@ -119,26 +119,18 @@ public class AuthenticationController {
 
     /*
      *send {"username":"admin","password":"password"}
-     *Response will be "{
-    "user": {
-        "userId": 1,
-        "username": "admin",
-        "password": "$2a$10$V/MHnTmBy/GYaJ1mzVjeROx4mTBy3sOKK6wlxNVhQjtwLFV4qL0F2",
-        "email": "admin@gmail.com",
-        "fitnessClass": null,
-        "authorities": [
-            {
-                "roleId": 1,
-                "authority": "ADMIN"
-            }
-        ],
-        "enabled": true,
-        "accountNonExpired": true,
-        "credentialsNonExpired": true,
-        "accountNonLocked": true
-    },
-    "jwt": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE2OTk5NjkxODgsInJvbGVzIjoiQURNSU4ifQ.LzBvfCENov2MfsfwuQuO6zxic1rPSC8ffNV4UG9-MNtUxm93ay0woLB0TW1xwM5nqWxo8tjA3yrbzQc6fX1iVLwvpISpEf3t5AEbKmeaQ-uH3QI03NBLQeRpZUt2iOfbWao2yHeukWnUMyGkwIh6nfrHXFujlqiNikQQeN5hpM1O5KNKMDJF5Nb--nVfjF89bRX3cSe9D8h-ZATFikw26ixn-z1OKafwbucutOwhpNy8p5WL7RwIugW4UPw-fGNJrnmh4BfJR7P3dnBlQAg9eZeGm1423yU9nv_7nRBlpnGnJCLYsp9zwLsFuArLSo_L6c2WaI34vP8ZXR4qWk30QA""
-     
+     *Response "{
+                    "userId": 1,
+                    "username": "admin",
+                    "email": "admin@gmail.com",
+                    "role": [
+                        {
+                            "roleId": 1,
+                            "authority": "ADMIN"
+                        }
+                    ],
+                    "jwt": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3MDA1Mzk1NTEsInJvbGVzIjoiQURNSU4ifQ.G2ZEiBql16OsXtdbDqUXzIi1vSlwvX6dbLrPIz9D780C-zhAViYwbT2V_gRqgUNNGpDsnIzdowZxRcm0LTx0La4nfMfb_Fh1YeQCgqtu4jJItpHUGWV29Gl0yJ-zmpZ-CnkkuPC_2ntVS8LRXRd2to9VriPRNlng91NZmoDjyQ47sTLjex-W3QQkF2vX2ndRNvC18BmRRbgFVp9mz3IJeXZctvZpBYSg054BKVK5ub-PXuaWOl0zYl5uKQVOY0LymDXmnDCmI8iwD2vT16f5NRzptElnZsYrjToEcBV1l4Hk3ewv9_cHzfUlcZRIR2hW1SnYVWshLi9GroUdCbzrKg"
+                }
     Tokenchanges after every logins
     */
 

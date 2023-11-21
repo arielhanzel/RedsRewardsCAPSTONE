@@ -14,7 +14,9 @@
     </div>
     <div class="hello">
       <h1 v-if="userStore.loggedIn">Welcome back, {{ storedUsername }}!</h1>
+
       <h1 v-else>Welcome to Red's Rewards!</h1>
+
       <p>
         Earn points to redeem exciting rewards!<br />
         Learn more about how to earn points

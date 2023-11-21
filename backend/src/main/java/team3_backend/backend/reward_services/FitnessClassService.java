@@ -20,11 +20,14 @@ import team3_backend.backend.reward_repository.FitnessClassRepository;
 @Service
 public class FitnessClassService {
 
-    @Autowired
+   
     private final FitnessClassRepository fitnessClassRepository;
 
-    public FitnessClassService(FitnessClassRepository fitnessClassRepository) {
+    private final UserRepository userRepository;
+
+    public FitnessClassService(FitnessClassRepository fitnessClassRepository, UserRepository userRepository) {
         this.fitnessClassRepository = fitnessClassRepository;
+        this.userRepository = userRepository;
     }
 
     public List<FitnessClassDTO> getAllFitnessClasses() {
@@ -71,9 +74,24 @@ public class FitnessClassService {
     }
 
     @Transactional
-    public void deleteClass(Integer classId) {
-        if (fitnessClassRepository.existsById(classId)) {
+    public String deleteFitnessClass(Integer classId) {
+        Optional<FitnessClass> fitnessClassOptional = fitnessClassRepository.findById(classId);
+
+        if (fitnessClassOptional.isPresent()) {
+            FitnessClass fitnessClass = fitnessClassOptional.get();
+
+            // Remove the fitness class from associated users
+            List<ApplicationUser> users = fitnessClass.getUsers();
+            if (users != null) {
+                for (ApplicationUser user : users) {
+                    user.getFitnessClasses().remove(fitnessClass);
+                    userRepository.save(user); // Assuming you have a userRepository to save the ApplicationUser
+                }
+            }
+
+            // Now that the fitness class is disassociated from all users, it can be safely deleted
             fitnessClassRepository.deleteById(classId);
+            return "Success";
         } else {
             // You can throw a custom exception here to handle "not found" scenario.
             throw new RuntimeException("FitnessClass not found!");

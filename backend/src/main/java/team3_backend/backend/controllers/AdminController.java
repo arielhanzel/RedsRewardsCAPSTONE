@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -101,6 +100,7 @@ public class AdminController {
     public String adminPage(){
         return "Admin Information";   
     }
+
 
 
 
@@ -232,6 +232,14 @@ public class AdminController {
 
 
 
+    @PostMapping("/fitnessclass/delete")
+    public String deleteFitnessClass(@RequestBody FitnessClassDTO body) {
+        FitnessClass fitnessClass = fitnessClassRepository.findByType(body.getType()).get();
+        return fitnessClassService.deleteFitnessClass(fitnessClass.getClassId());
+    }
+
+
+
 
 
 
@@ -285,29 +293,14 @@ public class AdminController {
                 }
      */
     @PostMapping("/registerclass")
-    public ApplicationUserDTO registerClass(@RequestBody ApplicationUserDTO body) {
-        
-        ApplicationUserDTO savedApplicationUserDTO = userService.addClassToUser(body.getUsername(), body.getClassType());
+    public ApplicationUserDTO registerClass(@RequestBody ApplicationUserDTO body){
+        ApplicationUserDTO savedApplicationUserDTO = userService.registerClass(body.getUsername(),body.getClassType());
         ApplicationUser applicationUser = userRepository.findById(savedApplicationUserDTO.getUserId()).get();
-        if (savedApplicationUserDTO != null) {
+        if(savedApplicationUserDTO != null){
             rewardPointService.addRewardPoints(applicationUser, 100);
         }
-
-        return savedApplicationUserDTO;
+        return savedApplicationUserDTO;    
     }
-
-
-
-
-    //To view list of registered classes by a user
-    //Send {"username": "admin"} +jwt token
-    @PostMapping("/registerdclasses")
-    public ResponseEntity<List<FitnessClassDTO>> getUserFitnessClasses(@RequestBody ApplicationUserDTO body) {
-        List<FitnessClassDTO> classes = userService.getFitnessClassesForUser(body.getUsername());
-        return ResponseEntity.ok(classes);
-    }
-
-    
 
 
 
@@ -446,7 +439,7 @@ public class AdminController {
 
 
     //Allready implemented while registering a new user from authentication service
-    //this is automated while user register with referrer name abd point will be added to referrer in unapprovedpoints database
+    //this is automated while user register with referrer name add point will be added to referrer in unapprovedpoints database
     @PostMapping("/referrer/addPoints")
     public RewardPointDTO addPointsReferrer(@RequestBody ApplicationUserDTO body){
         return rewardPointService.addPointsReferrer(body.getUsername());
@@ -606,6 +599,13 @@ public class AdminController {
         ApplicationUser applicationUser = userRepository.findByUsername(body.getUsername()).get();
         return rewardPointService.getTotalRewardPointsForUser(applicationUser);
     }
+
+
+
+
+
+
+    
 
     //to view approved reward point of all users from reward point database
     //send jwt token

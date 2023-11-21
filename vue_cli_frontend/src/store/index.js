@@ -4,8 +4,9 @@ import axios from "axios";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
+    userId: localStorage.getItem("userId"),
     user: localStorage.getItem("username"),
-    email: null,
+    email: localStorage.getItem("email"),
     password: null,
     referrer: null,
     points: 0,
@@ -56,25 +57,6 @@ export const useUserStore = defineStore("user", {
       }
     },
     async login(username, password) {
-      // Call an authentication service to log in the user (e.g., Firebase Authentication).
-      // Replace this with your actual authentication logic.
-      // const user = await authService.login(email, password);
-      // if (this.loggedIn) {
-      //   alert("Already logged in");
-      //   router.push("/");
-      // } else {
-      //   if (password === "password" && username === "username") {
-      //     const user = username;
-      //     // Update the user in the store state.
-      //     this.user = user;
-      //     this.points = 780;
-      //     this.loggedIn = true;
-      //     router.push("/");
-      //     alert("Successfully logged in");
-      //   } else {
-      //     alert("Wrong username or password");
-      //   }
-      // }
       const userData = {
         username: username,
         password: password,
@@ -86,21 +68,18 @@ export const useUserStore = defineStore("user", {
           userData
         );
 
-        if (response.data.user != null) {
+        if (response.data.jwt != null) {
+          this.userId = response.data.userId;
+          localStorage.setItem("userId", response.data.userId);
+          this.user = username;
+          localStorage.setItem("username", this.user);
+          this.email = response.data.email;
+          localStorage.setItem("email", response.data.email);
+          this.role = response.data.role[0].authority;
           this.token = response.data.jwt;
           localStorage.setItem("userToken", response.data.jwt);
-          this.user = username;
-          localStorage.setItem("username", username);
-          this.loggedIn = true;
 
-          if (
-            response.data.user.authorities &&
-            response.data.user.authorities.length > 0
-          ) {
-            this.role = response.data.user.authorities[0].authority;
-          } else {
-            console.error("No authorities found for user");
-          }
+          this.loggedIn = true;
 
           console.log("User logged in:", response.data);
           router.push("/");
@@ -116,8 +95,11 @@ export const useUserStore = defineStore("user", {
     logout() {
       console.log("User logged out:", this.user);
       this.token = null;
-      localStorage.removeItem("userToken");
+      localStorage.removeItem("user_id");
       localStorage.removeItem("username");
+      localStorage.removeItem("email");
+      localStorage.removeItem("role");
+      localStorage.removeItem("userToken");
       console.log("Token: ", localStorage.getItem("userToken"));
       this.loggedIn = false;
       this.user = null;
