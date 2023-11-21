@@ -17,6 +17,7 @@ export const useUserStore = defineStore("user", {
     redeemed2: 0,
     redeemed3: 0,
     redeemed4: 0,
+    initializing: false,
   }),
   getters: {
     progressPercentage() {
@@ -31,6 +32,7 @@ export const useUserStore = defineStore("user", {
       localStorage.setItem("userToken", token);
     },
     async initializeUser() {
+      this.initializing = true;
       const token = localStorage.getItem("userToken");
 
       if (token) {
@@ -56,6 +58,8 @@ export const useUserStore = defineStore("user", {
         } catch (error) {
           console.error("Error fetching user data:", error);
           // Handle errors, e.g., by logging out the user
+        } finally {
+          this.initializing = false;
         }
       }
     },

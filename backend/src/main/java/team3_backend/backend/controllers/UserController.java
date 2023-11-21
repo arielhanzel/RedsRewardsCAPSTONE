@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -195,6 +196,18 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+        @GetMapping("/rewardpoints/by-username/{username}")
+        public ResponseEntity<List<RewardPointDTO>> getAllRewardPointsForUserByUsername(@PathVariable String username) {
+            try {
+                ApplicationUser user = userRepository.findByUsername(username)
+                                                    .orElseThrow(() -> new RuntimeException("User not found"));
+                List<RewardPointDTO> rewardPoints = rewardPointService.getAllRewardPointsForUser(user);
+                return ResponseEntity.ok(rewardPoints);
+            } catch (Exception e) {
+                // Handle exceptions, such as user not found or server errors
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+    }
 
 }
 
