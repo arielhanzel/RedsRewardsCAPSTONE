@@ -189,8 +189,43 @@
     </div>
 
     <div class="section">
-      <h1>Task Editing</h1>
-      <p>Placeholder for now <a href="#">Edit Tasks</a></p>
+      <h1>Unapproved Rewards</h1>
+      <input
+        type="text"
+        v-model="unapprovedRewardsSearchQuery"
+        placeholder="Search by name..."
+        class="search-input"
+      />
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Point ID</th>
+              <th>Username</th>
+              <th>Points</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="reward in filteredUnapprovedRewards"
+              :key="reward.pointID"
+            >
+              <td>{{ reward.pointId }}</td>
+              <td>{{ reward.username }}</td>
+              <td>{{ reward.pointBalance }}</td>
+              <td>
+                <button
+                  @click="approveReward(reward)"
+                  class="unapproved-rewards-button"
+                >
+                  Approve
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -210,6 +245,8 @@ export default {
       },
       rewardPoints: [],
       registeredClasses: null,
+      unapprovedRewards: [],
+      unapprovedRewardsSearchQuery: "",
       deleteUsername: "",
     };
   },
@@ -221,6 +258,16 @@ export default {
         );
       }
       return this.users;
+    },
+    filteredUnapprovedRewards() {
+      if (this.unapprovedRewardsSearchQuery) {
+        return this.unapprovedRewards.filter((reward) =>
+          reward.username
+            .toLowerCase()
+            .includes(this.unapprovedRewardsSearchQuery.toLowerCase())
+        );
+      }
+      return this.unapprovedRewards;
     },
   },
   methods: {
@@ -376,6 +423,43 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+    fetchUnapprovedRewards() {
+      const userStore = useUserStore();
+      axios
+        .post("http://localhost:8000/admin/unapprovedreward/allview", null, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then((response) => {
+          this.unapprovedRewards = response.data;
+        })
+        .catch((error) => console.error(error));
+    },
+
+    approveReward(reward) {
+      console.log("Approving reward:", reward);
+      const userStore = useUserStore();
+      axios
+        .post(
+          "http://localhost:8000/admin/unapprovedreward/approve",
+          {
+            pointId: reward.pointId,
+            username: reward.username,
+            pointBalance: reward.pointBalance,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${userStore.token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then(() => {
+          this.unapprovedRewards = this.unapprovedRewards.filter(
+            (r) => r.pointId !== reward.pointId
+          );
+        })
+        .catch((error) => console.error(error));
+    },
   },
   mounted() {
     const userStore = useUserStore();
@@ -400,6 +484,7 @@ export default {
       });
     this.fetchFitnessClasses();
     this.fetchRewardPoints();
+    this.fetchUnapprovedRewards();
   },
 };
 </script>
@@ -575,6 +660,19 @@ button:disabled {
   border-color: #bbb;
   color: #aaa;
   cursor: not-allowed;
+}
+.section .unapproved-rewards-button {
+  padding: 4px 8px;
+  font-size: 12px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  background-color: #313131;
+  color: white;
+  cursor: pointer;
+}
+
+.section .unapproved-rewards-button:hover {
+  background-color: #880000;
 }
 
 @media (max-width: 740px) {
