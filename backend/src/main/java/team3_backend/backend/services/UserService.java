@@ -69,6 +69,13 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    public void deleteUserByUsername(String username) {
+        ApplicationUser user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        userRepository.delete(user);
+    }
+    
     private ApplicationUserDTO convertToDTO(ApplicationUser user) {
 
         return new ApplicationUserDTO(

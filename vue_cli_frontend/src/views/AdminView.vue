@@ -29,6 +29,17 @@
           </tbody>
         </table>
       </div>
+
+      <form @submit.prevent="deleteUser" class="add-class-form">
+        <input
+          type="text"
+          v-model="deleteUsername"
+          placeholder="Username to delete"
+        />
+        <button type="submit" :class="{ 'red-button': deleteUsername }">
+          Delete User
+        </button>
+      </form>
     </div>
 
     <div class="section">
@@ -199,6 +210,7 @@ export default {
       },
       rewardPoints: [],
       registeredClasses: null,
+      deleteUsername: "",
     };
   },
   computed: {
@@ -212,6 +224,33 @@ export default {
     },
   },
   methods: {
+    deleteUser() {
+      if (this.deleteUsername.trim().toLowerCase() === "admin") {
+        alert("Cannot delete the admin user.");
+        return;
+      }
+
+      const userStore = useUserStore();
+      const userData = {
+        username: this.deleteUsername,
+      };
+
+      axios
+        .post("http://localhost:8000/admin/delete/user", userData, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then(() => {
+          this.users = this.users.filter(
+            (user) => user.username !== this.deleteUsername
+          );
+          alert("User deleted successfully.");
+          this.deleteUsername = ""; // Reset the input field
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("An error occurred: " + error.response.data.message);
+        });
+    },
     fetchFitnessClasses() {
       const userStore = useUserStore();
       axios
