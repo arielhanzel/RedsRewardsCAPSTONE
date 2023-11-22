@@ -126,7 +126,7 @@
         class="search-input"
       />
       <div v-if="searchQuery">
-        <h2>Search Results</h2>
+        <h1>Search Results</h1>
         <table>
           <thead>
             <tr>

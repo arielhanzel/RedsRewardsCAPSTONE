@@ -27,7 +27,7 @@
             />
           </span>
         </div>
-        <input type="text" placeholder="Referrel name" v-model="referrer" />
+        <input type="text" placeholder="Referrer name" v-model="referrer" />
         <button type="submit">Sign Up</button>
         <span>
           <br />
