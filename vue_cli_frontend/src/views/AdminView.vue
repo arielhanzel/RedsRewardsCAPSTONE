@@ -81,9 +81,78 @@
           placeholder="Class Type (e.g., Yoga)"
         />
         <button type="submit" :class="{ 'red-button': newClass.type }">
-          register Fitness Class for a User
+          register FitnessClass for User
         </button>
       </form>
+
+      <form @submit.prevent="unregisterFitnessClass" class="add-class-form">
+        <input type="text" v-model="username" placeholder="Customer name" />
+        <input
+          type="text"
+          v-model="classType"
+          placeholder="Class Type (e.g., Yoga)"
+        />
+        <button type="submit" :class="{ 'red-button': classType }">
+          Unregister FitnessClass for User
+        </button>
+      </form>
+
+      <div v-if="registeredClasses">
+        <h1>Class registered by {{ registeredClasses.username }}</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Class Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(classType, index) in registeredClasses.classTypes"
+              :key="index"
+            >
+              <td>{{ index + 1 }}</td>
+              <td>{{ classType }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h1>User's Registered Class Lookup</h1>
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search by name..."
+        class="search-input"
+      />
+      <div v-if="searchQuery">
+        <h2>Search Results</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Username</th>
+              <th>Class Types</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="user in filteredUsers" :key="user.id">
+              <td>{{ user.userId }}</td>
+              <td>{{ user.username }}</td>
+              <td>
+                <ul>
+                  <li
+                    v-for="(classType, index) in user.classTypes"
+                    :key="index"
+                  >
+                    {{ classType }}
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="section">
@@ -118,7 +187,6 @@
 <script>
 import axios from "axios";
 import { useUserStore } from "@/store/index";
-import router from "../router";
 
 export default {
   data() {
@@ -130,6 +198,7 @@ export default {
         type: "",
       },
       rewardPoints: [],
+      registeredClasses: null,
     };
   },
   computed: {
@@ -177,6 +246,7 @@ export default {
         alert("Please enter a class type.");
         return;
       }
+
       axios
         .post(
           "http://localhost:8000/admin/fitnessclass/delete",
@@ -186,10 +256,68 @@ export default {
           }
         )
         .then((response) => {
+          // Remove the deleted class from the fitnessClasses array
+          this.fitnessClasses = this.fitnessClasses.filter(
+            (fitnessClass) => fitnessClass.type !== this.newClass.type
+          );
+          this.newClass.type = ""; // Reset the input field
           alert(response.data);
-          router.push("/home");
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.error(error);
+          alert("An error occurred during class deletion");
+        });
+    },
+
+    registerFitnessClass() {
+      const userStore = useUserStore();
+      const requestData = {
+        username: this.username,
+        classType: this.classType,
+      };
+
+      if (this.username.trim() === "" && this.classType.trim() === "") {
+        alert("Please enter both username and class type.");
+        return;
+      }
+
+      axios
+        .post("http://localhost:8000/admin/registerclass", requestData, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then((response) => {
+          this.registeredClasses = response.data;
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("An error occurred");
+        });
+    },
+
+    unregisterFitnessClass() {
+      const userStore = useUserStore();
+      const requestData = {
+        username: this.username,
+        classType: this.classType,
+      };
+
+      if (this.username.trim() === "" || this.classType.trim() === "") {
+        alert("Please enter both username and class type.");
+        return;
+      }
+
+      axios
+        .post("http://localhost:8000/admin/unregisterclass", requestData, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then((response) => {
+          alert(response.data + "Unregistered Successfully!");
+          // Optional: Code to update the UI accordingly
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("An error occurred during class unregistration");
+        });
     },
 
     fetchRewardPoints() {

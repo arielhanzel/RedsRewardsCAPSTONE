@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import team3_backend.backend.models.ApplicationUser;
 import team3_backend.backend.models_reward.FitnessClass;
 import team3_backend.backend.models_reward_dto.ApplicationUserDTO;
@@ -40,8 +41,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user is not valid"));
     }
 
-   
-    public ApplicationUserDTO registerClass(String username, String classType) {
+   @Transactional
+   public ApplicationUserDTO registerClass(String username, String classType) {
 
 
         ApplicationUser user = userRepository.findByUsername(username)
@@ -57,6 +58,17 @@ public class UserService implements UserDetailsService {
         return convertToDTO( userRepository.save(user)); // Return the DTO of the updated user
     }
 
+    @Transactional
+    public void removeFitnessClassFromUser(String username, String classType) {
+        ApplicationUser user = userRepository.findByUsername(username)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+        FitnessClass fitnessClass = fitnessClassRepository.findByType(classType)
+                                .orElseThrow(() -> new RuntimeException("Class not found"));
+
+        user.getFitnessClasses().remove(fitnessClass);
+        userRepository.save(user);
+    }
+
     private ApplicationUserDTO convertToDTO(ApplicationUser user) {
 
         return new ApplicationUserDTO(
@@ -65,8 +77,11 @@ public class UserService implements UserDetailsService {
                 user.getEmail(),
                 user.getAuthorities(),
                 null,
-                null, 0);
+                user.getFitnessClasses().stream()
+                       .map(FitnessClass::getType)
+                       .collect(Collectors.toList()), 0);
     }
+
 
 
     public ApplicationUserDTO userView(String username) {
