@@ -12,7 +12,7 @@ export const useUserStore = defineStore("user", {
     pointsNeeded: 1000,
     loggedIn: false,
     token: localStorage.getItem("userToken"),
-    role: null,
+    role: localStorage.getItem("userRole"),
     redeemed1: 0,
     redeemed2: 0,
     redeemed3: 0,
@@ -54,6 +54,7 @@ export const useUserStore = defineStore("user", {
 
           if (response.data) {
             this.role = response.data;
+            localStorage.setItem("userRole", response.data);
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -106,6 +107,7 @@ export const useUserStore = defineStore("user", {
             response.data.role[0].authority.length > 0
           ) {
             this.role = response.data.role[0].authority;
+            localStorage.setItem("userRole", response.data.role[0].authority);
           } else {
             console.error("No authorities found for user");
           }
@@ -126,6 +128,7 @@ export const useUserStore = defineStore("user", {
       this.token = null;
       localStorage.removeItem("userToken");
       localStorage.removeItem("username");
+      localStorage.removeItem("userRole");
       console.log("Token: ", localStorage.getItem("userToken"));
       this.loggedIn = false;
       this.user = null;
