@@ -15,5 +15,4 @@ import team3_backend.backend.models_reward.FitnessClass;
 public interface UserRepository extends JpaRepository<ApplicationUser, Integer> {
 	Optional<ApplicationUser> findByUsername(String username);
 	Optional<ApplicationUser> findByUsernameAndEmail(String username, String email);
-	void deleteByUsername(String username);
 }

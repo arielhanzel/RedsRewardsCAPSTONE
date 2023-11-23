@@ -69,11 +69,12 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void deleteUserByUsername(String username) {
         ApplicationUser user = userRepository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
-        userRepository.delete(user);
+        userRepository.deleteById(user.getUserId());
     }
     
     private ApplicationUserDTO convertToDTO(ApplicationUser user) {
