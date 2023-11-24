@@ -6,6 +6,7 @@ import SignUpView from "../views/SignUpView.vue";
 import RedeemView from "../views/RedeemView.vue";
 import AdminView from "../views/AdminView.vue";
 import ApiCalls from "../views/ApiCalls.vue";
+import UserView from "../views/UserView.vue";
 import { useUserStore } from "@/store";
 
 const routes = [
@@ -14,6 +15,12 @@ const routes = [
     name: "home",
     component: HomeView,
     // meta: { requiresAuth: true },
+  },
+  {
+    path: "/user",
+    name: "user",
+    component: UserView,
+    meta: { requiresAuth: true },
   },
   {
     path: "/about",

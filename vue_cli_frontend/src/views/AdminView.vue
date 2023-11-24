@@ -237,6 +237,8 @@ import { useUserStore } from "@/store/index";
 export default {
   data() {
     return {
+      username: null,
+      role: null,
       users: [],
       searchQuery: "",
       fitnessClasses: [],
@@ -463,6 +465,9 @@ export default {
   },
   mounted() {
     const userStore = useUserStore();
+    this.username = userStore.user;
+    this.role = userStore.role;
+
     document.title = "Red's Rewards - Admin";
     axios
       .post(

@@ -125,9 +125,22 @@ public class UserController {
 
 
     @PostMapping("/unapprovedreward/view")
-    public List<UnapprovedRewardDTO> viewUnapprovedReward(@RequestBody ApplicationUserDTO body){
-        ApplicationUser applicationUser = userRepository.findById(body.getUserId()).get();
-        return unapprovedRewardService.getAllUnapprovedRewardsForUser(applicationUser);
+    public ResponseEntity<?> viewUnapprovedReward(@RequestBody ApplicationUserDTO body) {
+        String username = body.getUsername();
+
+        if (username == null || username.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username must not be null or empty");
+        }
+
+        try {
+            ApplicationUser applicationUser = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            List<UnapprovedRewardDTO> unapprovedRewards = unapprovedRewardService.getAllUnapprovedRewardsForUser(applicationUser);
+            return ResponseEntity.ok(unapprovedRewards);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request: " + e.getMessage());
+        }
     }
 
 
