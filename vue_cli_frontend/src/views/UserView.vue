@@ -114,7 +114,7 @@
     </div>
 
     <div class="section">
-      <h1>Unapproved Rewards</h1>
+      <h1>Unapproved Points</h1>
       <table v-if="unapprovedRewards.length > 0" class="styled-table">
         <thead>
           <tr>
@@ -131,7 +131,7 @@
           </tr>
         </tbody>
       </table>
-      <p v-else>No unapproved rewards available.</p>
+      <p v-else>No unapproved points available.</p>
     </div>
   </div>
 </template>
@@ -154,6 +154,7 @@ export default {
       referrer: null,
       referees: [],
       unapprovedRewards: [],
+      redeemedRewards: [],
     };
   },
   computed: {
@@ -320,7 +321,6 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Common table styles */
 .styled-table {
   width: 100%;
   border-collapse: collapse;

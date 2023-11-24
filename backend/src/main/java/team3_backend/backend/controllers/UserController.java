@@ -127,15 +127,15 @@ public class UserController {
     @PostMapping("/unapprovedreward/view")
     public ResponseEntity<?> viewUnapprovedReward(@RequestBody ApplicationUserDTO body) {
         String username = body.getUsername();
-    
+
         if (username == null || username.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username must not be null or empty");
         }
-    
+
         try {
             ApplicationUser applicationUser = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found"));
-    
+
             List<UnapprovedRewardDTO> unapprovedRewards = unapprovedRewardService.getAllUnapprovedRewardsForUser(applicationUser);
             return ResponseEntity.ok(unapprovedRewards);
         } catch (Exception e) {
