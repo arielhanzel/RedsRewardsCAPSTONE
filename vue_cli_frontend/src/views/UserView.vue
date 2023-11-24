@@ -3,7 +3,7 @@
     <!-- User Overview Section -->
     <div class="section">
       <h1>User Overview</h1>
-      <table class="user-info-table">
+      <table class="styled-table">
         <tbody>
           <tr>
             <th>User ID</th>
@@ -44,7 +44,7 @@
     <!-- Register/Unregister for Class Section -->
     <div class="section">
       <h1>Available Fitness Classes</h1>
-      <table class="fitness-classes-table">
+      <table class="styled-table">
         <thead>
           <tr>
             <th>Class ID</th>
@@ -69,16 +69,69 @@
       </table>
     </div>
 
-    <!-- Available Classes Section -->
+    <!-- Referrer Section -->
     <div class="section">
-      <h1>Available Classes</h1>
-      <!-- Table to display available classes -->
+      <h1>My Referrer</h1>
+      <table v-if="referrer" class="styled-table">
+        <thead>
+          <tr>
+            <th>Referral ID</th>
+            <th>Referrer Username</th>
+            <th>Referee Username</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ referrer.referralId }}</td>
+            <td>{{ referrer.referrerUsername }}</td>
+            <td>{{ referrer.refereeUsername }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else>No referrer information available.</p>
     </div>
 
-    <!-- Referred and Referee Accounts Section -->
+    <!-- Referees Section -->
     <div class="section">
-      <h1>Referred and Referee Accounts</h1>
-      <!-- Table to display referred and referee accounts -->
+      <h1>My Referees</h1>
+      <table v-if="referees.length" class="styled-table">
+        <thead>
+          <tr>
+            <th>Referral ID</th>
+            <th>Referrer Username</th>
+            <th>Referee Username</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="referee in referees" :key="referee.referralId">
+            <td>{{ referee.referralId }}</td>
+            <td>{{ referee.referrerUsername }}</td>
+            <td>{{ referee.refereeUsername }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else>No referee information available.</p>
+    </div>
+
+    <div class="section">
+      <h1>Unapproved Rewards</h1>
+      <table v-if="unapprovedRewards.length > 0" class="styled-table">
+        <thead>
+          <tr>
+            <th>Point ID</th>
+            <th>Date</th>
+            <th>Point Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="reward in unapprovedRewards" :key="reward.pointId">
+            <td>{{ reward.pointId }}</td>
+            <td>{{ formatTimestamp(reward.timestamp) }}</td>
+            <td>{{ reward.pointBalance }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else>No unapproved rewards available.</p>
     </div>
   </div>
 </template>
@@ -98,6 +151,9 @@ export default {
       fitnessClasses: [],
       registerUsername: "",
       registerClassType: "",
+      referrer: null,
+      referees: [],
+      unapprovedRewards: [],
     };
   },
   computed: {
@@ -171,11 +227,70 @@ export default {
           // Handle errors, e.g., show an error message
         });
     },
+    fetchReferrer() {
+      const userStore = useUserStore();
+      const requestData = {
+        username: userStore.user,
+      };
+
+      axios
+        .post("http://localhost:8000/user/referrer/view", requestData, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then((response) => {
+          this.referrer = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching referrer data:", error);
+        });
+    },
+
+    fetchReferees() {
+      const userStore = useUserStore();
+      const requestData = {
+        username: userStore.user,
+      };
+
+      axios
+        .post("http://localhost:8000/user/referree/view", requestData, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then((response) => {
+          this.referees = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching referees data:", error);
+        });
+    },
+    fetchUnapprovedRewards() {
+      const userStore = useUserStore();
+      const requestData = {
+        username: userStore.user,
+      };
+
+      axios
+        .post("http://localhost:8000/user/unapprovedreward/view", requestData, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then((response) => {
+          this.unapprovedRewards = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching unapproved rewards:", error);
+        });
+    },
+    formatTimestamp(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+    },
   },
   mounted() {
     document.title = "Red's Rewards - User";
     this.fetchUserData();
     this.fetchFitnessClasses();
+    this.fetchReferrer();
+    this.fetchReferees();
+    this.fetchUnapprovedRewards();
   },
 };
 </script>
@@ -205,46 +320,26 @@ h1 {
   margin-bottom: 20px;
 }
 
-.user-info-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.user-info-table th,
-.user-info-table td {
-  padding: 8px;
-  border: 1px solid #ddd;
-}
-
-.user-info-table th {
-  background-color: #eee;
-  color: #333;
-}
-
-.user-info-table tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-.fitness-classes-table {
+/* Common table styles */
+.styled-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
   margin-top: 20px;
 }
 
-.fitness-classes-table th,
-.fitness-classes-table td {
+.styled-table th,
+.styled-table td {
   padding: 8px;
   border: 1px solid #ddd;
 }
 
-.fitness-classes-table th {
+.styled-table th {
   background-color: #eee;
   color: #333;
 }
 
-.fitness-classes-table tr:nth-child(even) {
+.styled-table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
@@ -257,8 +352,8 @@ h1 {
     padding: 15px;
   }
 
-  .user-info-table th,
-  .user-info-table td {
+  .styled-table th,
+  .styled-table td {
     padding: 6px;
   }
 }
