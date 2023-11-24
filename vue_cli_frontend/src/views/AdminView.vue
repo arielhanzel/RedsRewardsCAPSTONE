@@ -227,6 +227,33 @@
         </table>
       </div>
     </div>
+
+    <div class="section">
+      <h1>User's Reward Redemption History</h1>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Redemption ID</th>
+              <th>User ID</th>
+              <th>Reward Name</th>
+              <th>Date/Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="redemption in rewardRedemptions"
+              :key="redemption.redemptionId"
+            >
+              <td>{{ redemption.redemptionId }}</td>
+              <td>{{ redemption.userId }}</td>
+              <td>{{ redemption.rewardName }}</td>
+              <td>{{ new Date(redemption.timestamp).toLocaleString() }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -237,6 +264,8 @@ import { useUserStore } from "@/store/index";
 export default {
   data() {
     return {
+      username: null,
+      role: null,
       users: [],
       searchQuery: "",
       fitnessClasses: [],
@@ -248,6 +277,7 @@ export default {
       unapprovedRewards: [],
       unapprovedRewardsSearchQuery: "",
       deleteUsername: "",
+      rewardRedemptions: [],
     };
   },
   computed: {
@@ -460,9 +490,23 @@ export default {
         })
         .catch((error) => console.error(error));
     },
+    fetchRewardRedemptions() {
+      const userStore = useUserStore();
+      axios
+        .post("http://localhost:8000/admin/rewardredemption/allview", null, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then((response) => {
+          this.rewardRedemptions = response.data;
+        })
+        .catch((error) => console.error(error));
+    },
   },
   mounted() {
     const userStore = useUserStore();
+    this.username = userStore.user;
+    this.role = userStore.role;
+
     document.title = "Red's Rewards - Admin";
     axios
       .post(
