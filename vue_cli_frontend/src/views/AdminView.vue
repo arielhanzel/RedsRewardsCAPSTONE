@@ -29,17 +29,6 @@
           </tbody>
         </table>
       </div>
-
-      <form @submit.prevent="deleteUser" class="add-class-form">
-        <input
-          type="text"
-          v-model="deleteUsername"
-          placeholder="Username to delete"
-        />
-        <button type="submit" :class="{ 'red-button': deleteUsername }">
-          Delete User
-        </button>
-      </form>
     </div>
 
     <div class="section">
@@ -137,7 +126,7 @@
         class="search-input"
       />
       <div v-if="searchQuery">
-        <h1>Search Results</h1>
+        <h2>Search Results</h2>
         <table>
           <thead>
             <tr>
@@ -189,43 +178,8 @@
     </div>
 
     <div class="section">
-      <h1>Unapproved Rewards</h1>
-      <input
-        type="text"
-        v-model="unapprovedRewardsSearchQuery"
-        placeholder="Search by name..."
-        class="search-input"
-      />
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Point ID</th>
-              <th>Username</th>
-              <th>Points</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="reward in filteredUnapprovedRewards"
-              :key="reward.pointID"
-            >
-              <td>{{ reward.pointId }}</td>
-              <td>{{ reward.username }}</td>
-              <td>{{ reward.pointBalance }}</td>
-              <td>
-                <button
-                  @click="approveReward(reward)"
-                  class="unapproved-rewards-button"
-                >
-                  Approve
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <h1>Task Editing</h1>
+      <p>Placeholder for now <a href="#">Edit Tasks</a></p>
     </div>
   </div>
 </template>
@@ -245,9 +199,6 @@ export default {
       },
       rewardPoints: [],
       registeredClasses: null,
-      unapprovedRewards: [],
-      unapprovedRewardsSearchQuery: "",
-      deleteUsername: "",
     };
   },
   computed: {
@@ -259,45 +210,8 @@ export default {
       }
       return this.users;
     },
-    filteredUnapprovedRewards() {
-      if (this.unapprovedRewardsSearchQuery) {
-        return this.unapprovedRewards.filter((reward) =>
-          reward.username
-            .toLowerCase()
-            .includes(this.unapprovedRewardsSearchQuery.toLowerCase())
-        );
-      }
-      return this.unapprovedRewards;
-    },
   },
   methods: {
-    deleteUser() {
-      if (this.deleteUsername.trim().toLowerCase() === "admin") {
-        alert("Cannot delete the admin user.");
-        return;
-      }
-
-      const userStore = useUserStore();
-      const userData = {
-        username: this.deleteUsername,
-      };
-
-      axios
-        .post("http://localhost:8000/admin/delete/user", userData, {
-          headers: { Authorization: `Bearer ${userStore.token}` },
-        })
-        .then(() => {
-          this.users = this.users.filter(
-            (user) => user.username !== this.deleteUsername
-          );
-          alert("User deleted successfully.");
-          this.deleteUsername = ""; // Reset the input field
-        })
-        .catch((error) => {
-          console.error(error);
-          alert("An error occurred: " + error.response.data.message);
-        });
-    },
     fetchFitnessClasses() {
       const userStore = useUserStore();
       axios
@@ -332,7 +246,6 @@ export default {
         alert("Please enter a class type.");
         return;
       }
-
       axios
         .post(
           "http://localhost:8000/admin/fitnessclass/delete",
@@ -342,68 +255,10 @@ export default {
           }
         )
         .then((response) => {
-          // Remove the deleted class from the fitnessClasses array
-          this.fitnessClasses = this.fitnessClasses.filter(
-            (fitnessClass) => fitnessClass.type !== this.newClass.type
-          );
-          this.newClass.type = ""; // Reset the input field
           alert(response.data);
+          router.push("/home");
         })
-        .catch((error) => {
-          console.error(error);
-          alert("An error occurred during class deletion");
-        });
-    },
-
-    registerFitnessClass() {
-      const userStore = useUserStore();
-      const requestData = {
-        username: this.username,
-        classType: this.classType,
-      };
-
-      if (this.username.trim() === "" && this.classType.trim() === "") {
-        alert("Please enter both username and class type.");
-        return;
-      }
-
-      axios
-        .post("http://localhost:8000/admin/registerclass", requestData, {
-          headers: { Authorization: `Bearer ${userStore.token}` },
-        })
-        .then((response) => {
-          this.registeredClasses = response.data;
-        })
-        .catch((error) => {
-          console.error(error);
-          alert("An error occurred");
-        });
-    },
-
-    unregisterFitnessClass() {
-      const userStore = useUserStore();
-      const requestData = {
-        username: this.username,
-        classType: this.classType,
-      };
-
-      if (this.username.trim() === "" || this.classType.trim() === "") {
-        alert("Please enter both username and class type.");
-        return;
-      }
-
-      axios
-        .post("http://localhost:8000/admin/unregisterclass", requestData, {
-          headers: { Authorization: `Bearer ${userStore.token}` },
-        })
-        .then((response) => {
-          alert(response.data + "Unregistered Successfully!");
-          // Optional: Code to update the UI accordingly
-        })
-        .catch((error) => {
-          console.error(error);
-          alert("An error occurred during class unregistration");
-        });
+        .catch((error) => console.log(error));
     },
 
     fetchRewardPoints() {
@@ -422,43 +277,6 @@ export default {
           });
         })
         .catch((error) => console.log(error));
-    },
-    fetchUnapprovedRewards() {
-      const userStore = useUserStore();
-      axios
-        .post("http://localhost:8000/admin/unapprovedreward/allview", null, {
-          headers: { Authorization: `Bearer ${userStore.token}` },
-        })
-        .then((response) => {
-          this.unapprovedRewards = response.data;
-        })
-        .catch((error) => console.error(error));
-    },
-
-    approveReward(reward) {
-      console.log("Approving reward:", reward);
-      const userStore = useUserStore();
-      axios
-        .post(
-          "http://localhost:8000/admin/unapprovedreward/approve",
-          {
-            pointId: reward.pointId,
-            username: reward.username,
-            pointBalance: reward.pointBalance,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${userStore.token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then(() => {
-          this.unapprovedRewards = this.unapprovedRewards.filter(
-            (r) => r.pointId !== reward.pointId
-          );
-        })
-        .catch((error) => console.error(error));
     },
   },
   mounted() {
@@ -484,7 +302,6 @@ export default {
       });
     this.fetchFitnessClasses();
     this.fetchRewardPoints();
-    this.fetchUnapprovedRewards();
   },
 };
 </script>
@@ -660,19 +477,6 @@ button:disabled {
   border-color: #bbb;
   color: #aaa;
   cursor: not-allowed;
-}
-.section .unapproved-rewards-button {
-  padding: 4px 8px;
-  font-size: 12px;
-  border: 1px solid #ddd;
-  border-radius: 15px;
-  background-color: #313131;
-  color: white;
-  cursor: pointer;
-}
-
-.section .unapproved-rewards-button:hover {
-  background-color: #880000;
 }
 
 @media (max-width: 740px) {
