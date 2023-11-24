@@ -198,7 +198,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-        @GetMapping("/rewardpoints/by-username/{username}")
+     @GetMapping("/rewardpoints/by-username/{username}")
         public ResponseEntity<List<RewardPointDTO>> getAllRewardPointsForUserByUsername(@PathVariable String username) {
             try {
                 ApplicationUser user = userRepository.findByUsername(username)
@@ -210,6 +210,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
             }
     }
+
 
 }
 

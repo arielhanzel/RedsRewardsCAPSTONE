@@ -42,9 +42,6 @@ public class AuthenticationController {
     @Autowired
     private UnapprovedRewardService unapprovedRewardService;
 
-    @Autowired
-    private RewardPointService rewardPointService;
-
 
 
 
@@ -79,8 +76,6 @@ public class AuthenticationController {
         ApplicationUser savedApplicationUser = authenticationService.registerUser(body.getUsername(), body.getPassword(), body.getEmail());
 
        if(savedApplicationUser != null){    
-        // Add points for account creation
-        rewardPointService.addRewardPoints(savedApplicationUser, 50);
             
             // Create a referral if a username is provided in the 'referral' field of RegistrationDTO
             if(body.getReferrer() != null && !body.getReferrer().isEmpty()){
