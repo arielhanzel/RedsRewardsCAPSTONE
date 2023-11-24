@@ -44,94 +44,102 @@
     <!-- Register/Unregister for Class Section -->
     <div class="section">
       <h1>Available Fitness Classes</h1>
-      <table class="styled-table">
-        <thead>
-          <tr>
-            <th>Class ID</th>
-            <th>Type</th>
-            <th>Register</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="fitnessClass in fitnessClasses"
-            :key="fitnessClass.classId"
-          >
-            <td>{{ fitnessClass.classId }}</td>
-            <td>{{ fitnessClass.type }}</td>
-            <td>
-              <form @submit.prevent="registerForClass(fitnessClass.type)">
-                <button type="submit">Register</button>
-              </form>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-container">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Class ID</th>
+              <th>Type</th>
+              <th>Register</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="fitnessClass in fitnessClasses"
+              :key="fitnessClass.classId"
+            >
+              <td>{{ fitnessClass.classId }}</td>
+              <td>{{ fitnessClass.type }}</td>
+              <td>
+                <form @submit.prevent="registerForClass(fitnessClass.type)">
+                  <button type="submit">Register</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Referrer Section -->
     <div class="section">
       <h1>My Referrer</h1>
-      <table v-if="referrer" class="styled-table">
-        <thead>
-          <tr>
-            <th>Referral ID</th>
-            <th>Referrer Username</th>
-            <th>Referee Username</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{ referrer.referralId }}</td>
-            <td>{{ referrer.referrerUsername }}</td>
-            <td>{{ referrer.refereeUsername }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <p v-else>No referrer information available.</p>
+      <div class="table-container">
+        <table v-if="referrer" class="styled-table">
+          <thead>
+            <tr>
+              <th>Referral ID</th>
+              <th>Referrer Username</th>
+              <th>Referee Username</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ referrer.referralId }}</td>
+              <td>{{ referrer.referrerUsername }}</td>
+              <td>{{ referrer.refereeUsername }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p v-else>No referrer information available.</p>
+      </div>
     </div>
 
     <!-- Referees Section -->
     <div class="section">
       <h1>My Referees</h1>
-      <table v-if="referees.length" class="styled-table">
-        <thead>
-          <tr>
-            <th>Referral ID</th>
-            <th>Referrer Username</th>
-            <th>Referee Username</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="referee in referees" :key="referee.referralId">
-            <td>{{ referee.referralId }}</td>
-            <td>{{ referee.referrerUsername }}</td>
-            <td>{{ referee.refereeUsername }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <p v-else>No referee information available.</p>
+      <div class="table-container">
+        <table v-if="referees.length" class="styled-table">
+          <thead>
+            <tr>
+              <th>Referral ID</th>
+              <th>Referrer Username</th>
+              <th>Referee Username</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="referee in referees" :key="referee.referralId">
+              <td>{{ referee.referralId }}</td>
+              <td>{{ referee.referrerUsername }}</td>
+              <td>{{ referee.refereeUsername }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p v-else>No referee information available.</p>
+      </div>
     </div>
 
     <div class="section">
       <h1>Unapproved Points</h1>
-      <table v-if="unapprovedRewards.length > 0" class="styled-table">
-        <thead>
-          <tr>
-            <th>Point ID</th>
-            <th>Date</th>
-            <th>Point Balance</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="reward in unapprovedRewards" :key="reward.pointId">
-            <td>{{ reward.pointId }}</td>
-            <td>{{ formatTimestamp(reward.timestamp) }}</td>
-            <td>{{ reward.pointBalance }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <p v-else>No unapproved points available.</p>
+      <div class="table-container">
+        <table v-if="unapprovedRewards.length > 0" class="styled-table">
+          <thead>
+            <tr>
+              <th>Point ID</th>
+              <th>Date</th>
+              <th>Point Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="reward in unapprovedRewards" :key="reward.pointId">
+              <td>{{ reward.pointId }}</td>
+              <td>{{ formatTimestamp(reward.timestamp) }}</td>
+              <td>{{ reward.pointBalance }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p v-else>No unapproved points available.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -343,6 +351,36 @@ h1 {
   background-color: #f2f2f2;
 }
 
+.table-container {
+  max-height: 230px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.table-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
 @media (max-width: 740px) {
   .user-sections {
     padding: 20px;
@@ -355,6 +393,10 @@ h1 {
   .styled-table th,
   .styled-table td {
     padding: 6px;
+  }
+
+  .table-container {
+    max-height: 150px;
   }
 }
 </style>
