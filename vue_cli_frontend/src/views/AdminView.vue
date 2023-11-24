@@ -227,33 +227,6 @@
         </table>
       </div>
     </div>
-
-    <div class="section">
-      <h1>User's Reward Redemption History</h1>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Redemption ID</th>
-              <th>User ID</th>
-              <th>Reward Name</th>
-              <th>Date/Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="redemption in rewardRedemptions"
-              :key="redemption.redemptionId"
-            >
-              <td>{{ redemption.redemptionId }}</td>
-              <td>{{ redemption.userId }}</td>
-              <td>{{ redemption.rewardName }}</td>
-              <td>{{ new Date(redemption.timestamp).toLocaleString() }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -277,7 +250,6 @@ export default {
       unapprovedRewards: [],
       unapprovedRewardsSearchQuery: "",
       deleteUsername: "",
-      rewardRedemptions: [],
     };
   },
   computed: {
@@ -487,17 +459,6 @@ export default {
           this.unapprovedRewards = this.unapprovedRewards.filter(
             (r) => r.pointId !== reward.pointId
           );
-        })
-        .catch((error) => console.error(error));
-    },
-    fetchRewardRedemptions() {
-      const userStore = useUserStore();
-      axios
-        .post("http://localhost:8000/admin/rewardredemption/allview", null, {
-          headers: { Authorization: `Bearer ${userStore.token}` },
-        })
-        .then((response) => {
-          this.rewardRedemptions = response.data;
         })
         .catch((error) => console.error(error));
     },
