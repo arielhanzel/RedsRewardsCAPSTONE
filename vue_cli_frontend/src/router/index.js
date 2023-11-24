@@ -5,8 +5,8 @@ import LoginView from "../views/LoginView.vue";
 import SignUpView from "../views/SignUpView.vue";
 import RedeemView from "../views/RedeemView.vue";
 import AdminView from "../views/AdminView.vue";
+//import ProfilePageView from "../views/ProfilePageView.vue";
 import ApiCalls from "../views/ApiCalls.vue";
-import UserView from "../views/UserView.vue";
 import { useUserStore } from "@/store";
 
 const routes = [
@@ -15,12 +15,6 @@ const routes = [
     name: "home",
     component: HomeView,
     // meta: { requiresAuth: true },
-  },
-  {
-    path: "/user",
-    name: "user",
-    component: UserView,
-    meta: { requiresAuth: true },
   },
   {
     path: "/about",
@@ -50,6 +44,11 @@ const routes = [
     component: AdminView,
     meta: { requiresAuth: true, requiresAdmin: true },
   },
+  //{
+  // path: "/profile",
+  // name: "profile",
+  // component: ProfilePageView,
+  //},
   {
     path: "/apicalls",
     name: "apicalls",
@@ -64,7 +63,6 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const userStore = useUserStore();
-
   if (!userStore.loggedIn && localStorage.getItem("userToken")) {
     try {
       await userStore.initializeUser();
