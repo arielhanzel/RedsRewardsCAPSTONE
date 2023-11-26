@@ -27,12 +27,7 @@
             />
           </span>
         </div>
-        <input
-          type="text"
-          placeholder="Referrel name"
-          v-model="referrer"
-          required
-        />
+        <input type="text" placeholder="Referrer name" v-model="referrer" />
         <button type="submit">Sign Up</button>
         <span>
           <br />
@@ -58,7 +53,7 @@
   font-size: 3rem;
   margin-bottom: 1rem;
   color: rgb(255, 0, 0);
-  margin-bottom: -40px;
+  margin-bottom: 40px;
 }
 
 .signup-container {
