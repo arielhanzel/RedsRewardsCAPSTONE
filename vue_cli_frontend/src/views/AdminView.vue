@@ -325,7 +325,10 @@ export default {
           this.fitnessClasses.push(response.data);
           this.newClass.type = "";
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error);
+          alert("Cannot Add Fitness Class!");
+        });
     },
 
     deleteFitnessClass() {
@@ -378,7 +381,7 @@ export default {
         })
         .catch((error) => {
           console.error(error);
-          alert("An error occurred");
+          alert("An error occurred, cannot registered class!");
         });
     },
 

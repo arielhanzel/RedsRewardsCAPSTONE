@@ -62,7 +62,12 @@
               <td>{{ fitnessClass.type }}</td>
               <td>
                 <form @submit.prevent="registerForClass(fitnessClass.type)">
-                  <button type="submit">Register</button>
+                  <button
+                    type="submit"
+                    style="background-color: green; color: white"
+                  >
+                    Register
+                  </button>
                 </form>
               </td>
             </tr>
@@ -224,16 +229,16 @@ export default {
       };
 
       axios
-        .post("http://localhost:8000/user/registerclass", requestData, {
+        .post("http://localhost:8000/admin/registerclass", requestData, {
           headers: { Authorization: `Bearer ${userStore.token}` },
         })
         .then((response) => {
-          console.log("Class registered:", response.data);
-          // Handle successful registration, e.g., show a success message
+          this.registeredClasses = response.data;
+          alert("Registered Successfully");
         })
         .catch((error) => {
-          console.error("Error registering for class:", error);
-          // Handle errors, e.g., show an error message
+          console.error(error);
+          alert("An error occurred or Already registered!");
         });
     },
     fetchReferrer() {

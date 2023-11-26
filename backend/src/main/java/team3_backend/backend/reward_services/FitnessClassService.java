@@ -53,15 +53,26 @@ public class FitnessClassService {
         );
     }
 
-   @Transactional
+    @Transactional
     public FitnessClassDTO addFitnessClass(String type) {
-    FitnessClass fitnessClass = new FitnessClass();
-    fitnessClass.setType(type);
-    fitnessClass.setTime(LocalTime.now());
-    FitnessClass savedFitnessClass = fitnessClassRepository.save(fitnessClass);
-
-    return convertToDTO(savedFitnessClass);
+        // Check if a FitnessClass with the given type already exists
+        Optional<FitnessClass> existingFitnessClass = fitnessClassRepository.findByType(type);
+    
+        // If the type does not exist, create and save a new FitnessClass
+        if (!existingFitnessClass.isPresent()) {
+            FitnessClass fitnessClass = new FitnessClass();
+            fitnessClass.setType(type);
+            fitnessClass.setTime(LocalTime.now());
+            FitnessClass savedFitnessClass = fitnessClassRepository.save(fitnessClass);
+    
+            return convertToDTO(savedFitnessClass);
+        } else {
+            // If the type already exists, handle it appropriately
+            // For example, you might want to throw an exception or return null
+            throw new IllegalStateException("Fitness class with type " + type + " already exists.");
+        }
     }
+   
 
     @Transactional
     public FitnessClass updateFitnessClass(FitnessClass fitnessClass) {

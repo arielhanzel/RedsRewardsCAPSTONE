@@ -50,6 +50,13 @@ public class UserService implements UserDetailsService {
         FitnessClass fitnessClass = fitnessClassRepository.findByType(classType)
                 .orElseThrow(() -> new EntityNotFoundException("FitnessClass not found!"));
 
+        List<FitnessClass> classes = user.getFitnessClasses();
+
+        for(FitnessClass currentClass : classes){
+            if(currentClass.getType().equals(classType)) {
+                return null;
+            }
+        }
         // Add the fitness class to the user's set of fitness classes
         user.getFitnessClasses().add(fitnessClass);
         
