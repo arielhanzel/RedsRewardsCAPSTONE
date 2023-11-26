@@ -229,7 +229,7 @@ export default {
       };
 
       axios
-        .post("http://localhost:8000/admin/registerclass", requestData, {
+        .post("http://localhost:8000/user/registerclass", requestData, {
           headers: { Authorization: `Bearer ${userStore.token}` },
         })
         .then((response) => {
