@@ -32,9 +32,9 @@
 
         <li data-tooltip="closed">
           <div>
-            Checking-in to the gym
+            Registering for a class
             <span class="tooltip"
-              >Every time you check-in at Red's you will earn more
+              >Every time you register for a fitness class you earn 100
               points!.</span
             >
           </div>
@@ -43,15 +43,8 @@
           <div>
             Refer a friend!
             <span class="tooltip"
-              >Refer a friend to Red's and you will receive points!</span
-            >
-          </div>
-        </li>
-        <li data-tooltip="closed">
-          <div>
-            Birthday
-            <span class="tooltip"
-              >Every year you will receive points for your birthday!</span
+              >Refer a friend to Red's Rewards and you will receive 100
+              points!</span
             >
           </div>
         </li>
@@ -65,7 +58,7 @@
         class="section-image"
       />
       <h1>Rewards</h1>
-      <p>Exchange your hard-earned points for these rewards:</p>
+      <p>Exchange your points for these rewards:</p>
       <ul>
         <li>
           Red's T-shirt 200 points
@@ -228,7 +221,6 @@ li:hover .tooltip {
   z-index: 1;
   bottom: 100%;
   left: 50%;
-  transform: translateY(-100%);
   margin-left: 8px;
   white-space: nowrap;
   font-size: 14px;
