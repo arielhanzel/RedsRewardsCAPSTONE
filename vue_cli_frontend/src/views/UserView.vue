@@ -235,6 +235,7 @@ export default {
         .then((response) => {
           this.registeredClasses = response.data;
           alert("Registered Successfully");
+          this.fetchUserData();
         })
         .catch((error) => {
           console.error(error);
