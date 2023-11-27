@@ -236,6 +236,7 @@ export default {
           this.registeredClasses = response.data;
           alert("Registered Successfully");
           this.fetchUserData();
+          this.fetchUnapprovedRewards();
         })
         .catch((error) => {
           console.error(error);

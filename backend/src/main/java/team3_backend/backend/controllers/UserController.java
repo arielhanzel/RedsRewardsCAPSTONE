@@ -108,7 +108,7 @@ public class UserController {
         ApplicationUserDTO savedApplicationUserDTO = userService.registerClass(body.getUsername(),body.getClassType());
         ApplicationUser applicationUser = userRepository.findById(savedApplicationUserDTO.getUserId()).get();
         if(savedApplicationUserDTO != null){
-            rewardPointService.addRewardPoints(applicationUser, 100);
+            unapprovedRewardService.addUnapprovedReward(applicationUser, 100);
         }
         return savedApplicationUserDTO;    
     }
