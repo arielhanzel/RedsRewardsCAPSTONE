@@ -5,7 +5,7 @@ import LoginView from "../views/LoginView.vue";
 import SignUpView from "../views/SignUpView.vue";
 import RedeemView from "../views/RedeemView.vue";
 import AdminView from "../views/AdminView.vue";
-//import ProfilePageView from "../views/ProfilePageView.vue";
+import UserView from "../views/UserView.vue";
 import ApiCalls from "../views/ApiCalls.vue";
 import { useUserStore } from "@/store";
 
@@ -44,11 +44,11 @@ const routes = [
     component: AdminView,
     meta: { requiresAuth: true, requiresAdmin: true },
   },
-  //{
-  // path: "/profile",
-  // name: "profile",
-  // component: ProfilePageView,
-  //},
+  {
+    path: "/user",
+    name: "user",
+    component: UserView,
+  },
   {
     path: "/apicalls",
     name: "apicalls",

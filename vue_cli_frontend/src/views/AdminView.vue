@@ -92,7 +92,7 @@
           placeholder="Class Type (e.g., Yoga)"
         />
         <button type="submit" :class="{ 'red-button': newClass.type }">
-          register FitnessClass for User
+          Register Fitness Class for User
         </button>
       </form>
 
@@ -104,7 +104,7 @@
           placeholder="Class Type (e.g., Yoga)"
         />
         <button type="submit" :class="{ 'red-button': classType }">
-          Unregister FitnessClass for User
+          Unregister Fitness Class for User
         </button>
       </form>
 
@@ -164,6 +164,71 @@
           </tbody>
         </table>
       </div>
+    </div>
+
+    <div class="section">
+      <h1>Fitness Class Check-in/Checkout</h1>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Check-in/Checkout</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="fitnessClass in fitnessClasses" :key="fitnessClass.id">
+              <td>{{ fitnessClass.classId }}</td>
+              <td>{{ fitnessClass.type }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <form @submit.prevent="registerFitnessClass" class="add-class-form">
+        <input type="text" v-model="username" placeholder="Customer name" />
+        <input
+          type="text"
+          v-model="classType"
+          placeholder="Class Time (e.g., 04:30 pm)"
+        />
+        <button type="submit" :class="{ 'red-button': newClass.type }">
+          Check-in for a Fitness Class
+        </button>
+      </form>
+
+      <form @submit.prevent="unregisterFitnessClass" class="add-class-form">
+        <input type="text" v-model="username" placeholder="Customer name" />
+        <input
+          type="text"
+          v-model="classType"
+          placeholder="Class Time (e.g., 04:30 pm)"
+        />
+        <button type="submit" :class="{ 'red-button': classType }">
+          Checkout of a Fitness Class
+        </button>
+      </form>
+    </div>
+    <div v-if="registeredClasses">
+      <h1>Class registered by {{ registeredClasses.username }}</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Class Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(classType, index) in registeredClasses.classTypes"
+            :key="index"
+          >
+            <td>{{ index + 1 }}</td>
+            <td>{{ classType }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <div class="section">
