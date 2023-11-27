@@ -273,6 +273,27 @@ export default {
     },
   },
   methods: {
+    fetchUser() {
+      const userStore = useUserStore();
+      axios
+        .post(
+          "http://localhost:8000/admin/user/allview",
+          {
+            username: userStore.user,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${userStore.token}`,
+            },
+          }
+        )
+        .then((response) => {
+          this.users = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     deleteUser() {
       if (this.deleteUsername.trim().toLowerCase() === "admin") {
         alert("Cannot delete the admin user.");
@@ -378,6 +399,8 @@ export default {
         })
         .then((response) => {
           this.registeredClasses = response.data;
+          this.fetchUser();
+          alert("Registered Successfully!");
         })
         .catch((error) => {
           console.error(error);
@@ -403,6 +426,7 @@ export default {
         })
         .then((response) => {
           alert(response.data + "Unregistered Successfully!");
+          this.fetchUser();
           // Optional: Code to update the UI accordingly
         })
         .catch((error) => {
