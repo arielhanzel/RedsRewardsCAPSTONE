@@ -167,71 +167,6 @@
     </div>
 
     <div class="section">
-      <h1>Fitness Class Check-in/Checkout</h1>
-
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Check-in/Checkout</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="fitnessClass in fitnessClasses" :key="fitnessClass.id">
-              <td>{{ fitnessClass.classId }}</td>
-              <td>{{ fitnessClass.type }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <form @submit.prevent="registerFitnessClass" class="add-class-form">
-        <input type="text" v-model="username" placeholder="Customer name" />
-        <input
-          type="text"
-          v-model="classType"
-          placeholder="Class Time (e.g., 04:30 pm)"
-        />
-        <button type="submit" :class="{ 'red-button': newClass.type }">
-          Check-in for a Fitness Class
-        </button>
-      </form>
-
-      <form @submit.prevent="unregisterFitnessClass" class="add-class-form">
-        <input type="text" v-model="username" placeholder="Customer name" />
-        <input
-          type="text"
-          v-model="classType"
-          placeholder="Class Time (e.g., 04:30 pm)"
-        />
-        <button type="submit" :class="{ 'red-button': classType }">
-          Checkout of a Fitness Class
-        </button>
-      </form>
-    </div>
-    <div v-if="registeredClasses">
-      <h1>Class registered by {{ registeredClasses.username }}</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Class Type</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(classType, index) in registeredClasses.classTypes"
-            :key="index"
-          >
-            <td>{{ index + 1 }}</td>
-            <td>{{ classType }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="section">
       <h1>Reward Points Overview</h1>
       <div class="table-container">
         <table>
@@ -315,6 +250,8 @@ export default {
       unapprovedRewards: [],
       unapprovedRewardsSearchQuery: "",
       deleteUsername: "",
+      referrals: [],
+      referralSearchQuery: "",
     };
   },
   computed: {
@@ -336,8 +273,39 @@ export default {
       }
       return this.unapprovedRewards;
     },
+    filteredReferrals() {
+      if (this.referralSearchQuery) {
+        return Object.entries(this.referrals).filter(([username]) =>
+          username
+            .toLowerCase()
+            .includes(this.referralSearchQuery.toLowerCase())
+        );
+      }
+      return Object.entries(this.referrals);
+    },
   },
   methods: {
+    fetchUser() {
+      const userStore = useUserStore();
+      axios
+        .post(
+          "http://localhost:8000/admin/user/allview",
+          {
+            username: userStore.user,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${userStore.token}`,
+            },
+          }
+        )
+        .then((response) => {
+          this.users = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     deleteUser() {
       if (this.deleteUsername.trim().toLowerCase() === "admin") {
         alert("Cannot delete the admin user.");
@@ -390,7 +358,10 @@ export default {
           this.fitnessClasses.push(response.data);
           this.newClass.type = "";
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error);
+          alert("Cannot Add Fitness Class!");
+        });
     },
 
     deleteFitnessClass() {
@@ -440,10 +411,12 @@ export default {
         })
         .then((response) => {
           this.registeredClasses = response.data;
+          this.fetchUser();
+          alert("Registered Successfully!");
         })
         .catch((error) => {
           console.error(error);
-          alert("An error occurred");
+          alert("An error occurred, cannot registered class!");
         });
     },
 
@@ -465,6 +438,7 @@ export default {
         })
         .then((response) => {
           alert(response.data + "Unregistered Successfully!");
+          this.fetchUser();
           // Optional: Code to update the UI accordingly
         })
         .catch((error) => {
@@ -480,13 +454,19 @@ export default {
           headers: { Authorization: `Bearer ${userStore.token}` },
         })
         .then((response) => {
-          this.rewardPoints = response.data.map((point) => {
-            return {
-              username: point.username,
-              timestamp: new Date(point.timestamp).toLocaleString(),
-              pointsEarned: point.pointBalance,
-            };
-          });
+          const sortedPoints = response.data
+            .map((point) => {
+              return {
+                username: point.username,
+                timestamp: new Date(point.timestamp).toLocaleString(),
+                pointsEarned: point.pointBalance,
+              };
+            })
+            .sort((a, b) => {
+              return new Date(b.timestamp) - new Date(a.timestamp);
+            });
+
+          this.rewardPoints = sortedPoints;
         })
         .catch((error) => console.log(error));
     },
@@ -527,6 +507,45 @@ export default {
         })
         .catch((error) => console.error(error));
     },
+    fetchReferrals() {
+      const userStore = useUserStore();
+      axios
+        .post("http://localhost:8000/admin/referral/view", null, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then((response) => {
+          this.processReferralData(response.data);
+        })
+        .catch((error) => console.error(error));
+    },
+
+    processReferralData(referralData) {
+      // Initialize an object to hold processed data
+      let processedData = {};
+
+      referralData.forEach((referral) => {
+        // For each referee, add their referrer
+        if (!processedData[referral.refereeUsername]) {
+          processedData[referral.refereeUsername] = {
+            referrer: referral.referrerUsername,
+            referees: [],
+          };
+        }
+
+        // For each referrer, add their referees
+        if (!processedData[referral.referrerUsername]) {
+          processedData[referral.referrerUsername] = {
+            referrer: "",
+            referees: [],
+          };
+        }
+        processedData[referral.referrerUsername].referees.push(
+          referral.refereeUsername
+        );
+      });
+
+      this.referrals = processedData;
+    },
   },
   mounted() {
     const userStore = useUserStore();
@@ -555,6 +574,7 @@ export default {
     this.fetchFitnessClasses();
     this.fetchRewardPoints();
     this.fetchUnapprovedRewards();
+    this.fetchReferrals();
   },
 };
 </script>

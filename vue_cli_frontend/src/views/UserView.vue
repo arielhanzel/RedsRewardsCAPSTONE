@@ -62,7 +62,12 @@
               <td>{{ fitnessClass.type }}</td>
               <td>
                 <form @submit.prevent="registerForClass(fitnessClass.type)">
-                  <button type="submit">Register</button>
+                  <button
+                    type="submit"
+                    style="background-color: green; color: white"
+                  >
+                    Register
+                  </button>
                 </form>
               </td>
             </tr>
@@ -228,12 +233,14 @@ export default {
           headers: { Authorization: `Bearer ${userStore.token}` },
         })
         .then((response) => {
-          console.log("Class registered:", response.data);
-          // Handle successful registration, e.g., show a success message
+          this.registeredClasses = response.data;
+          alert("Registered Successfully");
+          this.fetchUserData();
+          this.fetchUnapprovedRewards();
         })
         .catch((error) => {
-          console.error("Error registering for class:", error);
-          // Handle errors, e.g., show an error message
+          console.error(error);
+          alert("An error occurred or Already registered!");
         });
     },
     fetchReferrer() {

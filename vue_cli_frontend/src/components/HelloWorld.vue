@@ -93,7 +93,9 @@ const fetchUserPoints = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    userPoints.value = response.data;
+    userPoints.value = response.data.sort((a, b) => {
+      return new Date(b.timestamp) - new Date(a.timestamp);
+    });
   } catch (error) {
     console.error("Failed to fetch user points:", error);
     alert("Failed to fetch points");

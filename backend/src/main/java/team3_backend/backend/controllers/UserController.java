@@ -1,5 +1,6 @@
 package team3_backend.backend.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -107,9 +108,31 @@ public class UserController {
         ApplicationUserDTO savedApplicationUserDTO = userService.registerClass(body.getUsername(),body.getClassType());
         ApplicationUser applicationUser = userRepository.findById(savedApplicationUserDTO.getUserId()).get();
         if(savedApplicationUserDTO != null){
-            rewardPointService.addRewardPoints(applicationUser, 100);
+            unapprovedRewardService.addUnapprovedReward(applicationUser, 100);
         }
         return savedApplicationUserDTO;    
+    }
+
+    @PostMapping("/registeredclasses")
+    public List<String> registeredClasses(@RequestBody ApplicationUserDTO body) {
+    ApplicationUser user = userRepository.findByUsername(body.getUsername()).get();
+    List<FitnessClass> registeredClasses = user.getFitnessClasses();
+
+    // Initialize the classes list outside the loop
+    List<String> classes = new ArrayList<>();
+
+    // Loop through each registered class and add its type to the classes list
+    for (FitnessClass registeredClass : registeredClasses) {
+        classes.add(registeredClass.getType());
+    }
+
+    return classes;
+    }
+
+    @PostMapping("/unregisterclass")
+    public ResponseEntity<?> unregisteredClasses(@RequestBody ApplicationUserDTO body) { 
+        userService.removeFitnessClassFromUser(body.getUsername(), body.getClassType());
+        return ResponseEntity.ok().build();
     }
 
 
