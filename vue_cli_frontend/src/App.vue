@@ -157,7 +157,7 @@ nav a.router-link-exact-active {
   color: rgb(255, 0, 0);
 }
 
-@media only screen and (max-width: 740px) {
+@media only screen and (max-width: 800px) {
   .header {
     flex-direction: column;
     align-items: center;

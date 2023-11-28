@@ -491,13 +491,19 @@ export default {
           headers: { Authorization: `Bearer ${userStore.token}` },
         })
         .then((response) => {
-          this.rewardPoints = response.data.map((point) => {
-            return {
-              username: point.username,
-              timestamp: new Date(point.timestamp).toLocaleString(),
-              pointsEarned: point.pointBalance,
-            };
-          });
+          const sortedPoints = response.data
+            .map((point) => {
+              return {
+                username: point.username,
+                timestamp: new Date(point.timestamp).toLocaleString(),
+                pointsEarned: point.pointBalance,
+              };
+            })
+            .sort((a, b) => {
+              return new Date(b.timestamp) - new Date(a.timestamp);
+            });
+
+          this.rewardPoints = sortedPoints;
         })
         .catch((error) => console.log(error));
     },
