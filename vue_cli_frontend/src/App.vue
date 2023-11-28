@@ -27,7 +27,7 @@
         >Admin</router-link
       >
       <router-link v-if="useStore.token && useStore.token != 'null'" to="/user"
-        >User</router-link
+        >My Profile</router-link
       >
 
       <router-link to="/about">About</router-link>

@@ -167,6 +167,40 @@
     </div>
 
     <div class="section">
+      <h1>Referral Lookup</h1>
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search by name..."
+        class="search-input"
+      />
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Referred by</th>
+              <th>List of Referees</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(referral, username) in referrals" :key="username">
+              <td>{{ username }}</td>
+              <td>{{ referral.referrer }}</td>
+              <td>
+                <ul>
+                  <li v-for="referee in referral.referees" :key="referee">
+                    {{ referee }}
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
       <h1>Reward Points Overview</h1>
       <div class="table-container">
         <table>
@@ -250,6 +284,7 @@ export default {
       unapprovedRewards: [],
       unapprovedRewardsSearchQuery: "",
       deleteUsername: "",
+      referrals: [],
     };
   },
   computed: {
@@ -273,6 +308,27 @@ export default {
     },
   },
   methods: {
+    fetchUser() {
+      const userStore = useUserStore();
+      axios
+        .post(
+          "http://localhost:8000/admin/user/allview",
+          {
+            username: userStore.user,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${userStore.token}`,
+            },
+          }
+        )
+        .then((response) => {
+          this.users = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     deleteUser() {
       if (this.deleteUsername.trim().toLowerCase() === "admin") {
         alert("Cannot delete the admin user.");
@@ -325,7 +381,10 @@ export default {
           this.fitnessClasses.push(response.data);
           this.newClass.type = "";
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error);
+          alert("Cannot Add Fitness Class!");
+        });
     },
 
     deleteFitnessClass() {
@@ -375,10 +434,12 @@ export default {
         })
         .then((response) => {
           this.registeredClasses = response.data;
+          this.fetchUser();
+          alert("Registered Successfully!");
         })
         .catch((error) => {
           console.error(error);
-          alert("An error occurred");
+          alert("An error occurred, cannot registered class!");
         });
     },
 
@@ -400,6 +461,7 @@ export default {
         })
         .then((response) => {
           alert(response.data + "Unregistered Successfully!");
+          this.fetchUser();
           // Optional: Code to update the UI accordingly
         })
         .catch((error) => {
@@ -462,6 +524,45 @@ export default {
         })
         .catch((error) => console.error(error));
     },
+    fetchReferrals() {
+      const userStore = useUserStore();
+      axios
+        .post("http://localhost:8000/admin/referral/view", null, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then((response) => {
+          this.processReferralData(response.data);
+        })
+        .catch((error) => console.error(error));
+    },
+
+    processReferralData(referralData) {
+      // Initialize an object to hold processed data
+      let processedData = {};
+
+      referralData.forEach((referral) => {
+        // For each referee, add their referrer
+        if (!processedData[referral.refereeUsername]) {
+          processedData[referral.refereeUsername] = {
+            referrer: referral.referrerUsername,
+            referees: [],
+          };
+        }
+
+        // For each referrer, add their referees
+        if (!processedData[referral.referrerUsername]) {
+          processedData[referral.referrerUsername] = {
+            referrer: "",
+            referees: [],
+          };
+        }
+        processedData[referral.referrerUsername].referees.push(
+          referral.refereeUsername
+        );
+      });
+
+      this.referrals = processedData;
+    },
   },
   mounted() {
     const userStore = useUserStore();
@@ -490,6 +591,7 @@ export default {
     this.fetchFitnessClasses();
     this.fetchRewardPoints();
     this.fetchUnapprovedRewards();
+    this.fetchReferrals();
   },
 };
 </script>
