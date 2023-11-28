@@ -170,7 +170,7 @@
       <h1>Referral Lookup</h1>
       <input
         type="text"
-        v-model="searchQuery"
+        v-model="referralSearchQuery"
         placeholder="Search by name..."
         class="search-input"
       />
@@ -184,7 +184,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(referral, username) in referrals" :key="username">
+            <tr
+              v-for="[username, referral] in filteredReferrals"
+              :key="username"
+            >
               <td>{{ username }}</td>
               <td>{{ referral.referrer }}</td>
               <td>
@@ -285,6 +288,7 @@ export default {
       unapprovedRewardsSearchQuery: "",
       deleteUsername: "",
       referrals: [],
+      referralSearchQuery: "",
     };
   },
   computed: {
@@ -305,6 +309,16 @@ export default {
         );
       }
       return this.unapprovedRewards;
+    },
+    filteredReferrals() {
+      if (this.referralSearchQuery) {
+        return Object.entries(this.referrals).filter(([username]) =>
+          username
+            .toLowerCase()
+            .includes(this.referralSearchQuery.toLowerCase())
+        );
+      }
+      return Object.entries(this.referrals);
     },
   },
   methods: {
