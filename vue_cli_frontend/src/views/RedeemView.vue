@@ -6,8 +6,9 @@
       </h1>
     </div>
     <!-- Add points for testing -->
-    <button @click="userStore.addPoints(100)">Add Points</button>
-    <button @click="userStore.viewRedeemCount()">View Redeem Count</button>
+    <button v-if="userStore.role === 'ADMIN'" @click="userStore.addPoints(100)">
+      Add Points
+    </button>
 
     <div class="rewards-list">
       <div class="reward-item" v-for="(reward, index) in rewards" :key="index">
