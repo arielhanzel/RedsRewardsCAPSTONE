@@ -27,7 +27,7 @@ const routes = [
     path: "/user",
     name: "user",
     component: UserView,
-    // meta: { requiresAuth: true },
+    meta: { requiresAuth: true },
   },
   {
     path: "/login",
@@ -50,11 +50,6 @@ const routes = [
     name: "admin",
     component: AdminView,
     meta: { requiresAuth: true, requiresAdmin: true },
-  },
-  {
-    path: "/user",
-    name: "user",
-    component: UserView,
   },
   {
     path: "/apicalls",
