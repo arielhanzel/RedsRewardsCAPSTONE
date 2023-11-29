@@ -412,6 +412,8 @@ export default {
         .then((response) => {
           this.registeredClasses = response.data;
           this.fetchUser();
+          this.fetchUnapprovedRewards();
+          this.fetchRewardPoints();
           alert("Registered Successfully!");
         })
         .catch((error) => {
@@ -504,6 +506,8 @@ export default {
           this.unapprovedRewards = this.unapprovedRewards.filter(
             (r) => r.pointId !== reward.pointId
           );
+          this.fetchUnapprovedRewards();
+          this.fetchRewardPoints();
         })
         .catch((error) => console.error(error));
     },
