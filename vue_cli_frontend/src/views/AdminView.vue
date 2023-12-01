@@ -5,7 +5,7 @@
       <h1>User Lookup</h1>
       <input
         type="text"
-        v-model="searchQuery"
+        v-model="userLookupQuery"
         placeholder="Search by name..."
         class="search-input"
       />
@@ -17,6 +17,7 @@
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -25,21 +26,15 @@
               <td>{{ user.username }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.roles[0].authority }}</td>
+              <td>
+                <button class="red-button" @click="confirmDelete(user)">
+                  Delete
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
-
-      <form @submit.prevent="deleteUser" class="add-class-form">
-        <input
-          type="text"
-          v-model="deleteUsername"
-          placeholder="Username to delete"
-        />
-        <button type="submit" :class="{ 'red-button': deleteUsername }">
-          Delete User
-        </button>
-      </form>
     </div>
 
     <div class="section">
@@ -62,49 +57,55 @@
             <tr>
               <th>Class ID</th>
               <th>Type</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="fitnessClass in fitnessClasses" :key="fitnessClass.id">
               <td>{{ fitnessClass.classId }}</td>
               <td>{{ fitnessClass.type }}</td>
+              <td>
+                <button
+                  class="red-button"
+                  @click="confirmDeleteClass(fitnessClass)"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <form @submit.prevent="deleteFitnessClass" class="add-class-form">
+      <form @submit.prevent="manageFitnessClass" class="add-class-form">
         <input
           type="text"
-          v-model="newClass.type"
-          placeholder="Class Type (e.g., Yoga)"
+          v-model="manageUsername"
+          placeholder="Customer name"
         />
-        <button type="submit" :class="{ 'red-button': newClass.type }">
-          Delete Class
+        <select v-model="manageClassType">
+          <option disabled value="">Select a class</option>
+          <option
+            v-for="fitnessClass in fitnessClasses"
+            :key="fitnessClass.id"
+            :value="fitnessClass.type"
+          >
+            {{ fitnessClass.type }}
+          </option>
+        </select>
+        <button
+          type="green-button"
+          @click="registerFitnessClass"
+          :class="{ 'green-button': manageClassType }"
+        >
+          Register
         </button>
-      </form>
-
-      <form @submit.prevent="registerFitnessClass" class="add-class-form">
-        <input type="text" v-model="username" placeholder="Customer name" />
-        <input
-          type="text"
-          v-model="classType"
-          placeholder="Class Type (e.g., Yoga)"
-        />
-        <button type="submit" :class="{ 'red-button': newClass.type }">
-          Register Fitness Class for User
-        </button>
-      </form>
-
-      <form @submit.prevent="unregisterFitnessClass" class="add-class-form">
-        <input type="text" v-model="username" placeholder="Customer name" />
-        <input
-          type="text"
-          v-model="classType"
-          placeholder="Class Type (e.g., Yoga)"
-        />
-        <button type="submit" :class="{ 'red-button': classType }">
-          Unregister Fitness Class for User
+        <button
+          type="red-button"
+          @click="unregisterFitnessClass"
+          :class="{ 'red-button': manageClassType }"
+        >
+          Unregister
         </button>
       </form>
 
@@ -132,11 +133,11 @@
       <h1>User's Registered Class Lookup</h1>
       <input
         type="text"
-        v-model="searchQuery"
+        v-model="classLookupQuery"
         placeholder="Search by name..."
         class="search-input"
       />
-      <div v-if="searchQuery">
+      <div v-if="classLookupQuery">
         <h1>Search Results</h1>
         <table>
           <thead>
@@ -147,7 +148,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in filteredUsers" :key="user.id">
+            <tr v-for="user in filteredUserClasses" :key="user.id">
               <td>{{ user.userId }}</td>
               <td>{{ user.username }}</td>
               <td>
@@ -240,7 +241,7 @@ export default {
       username: null,
       role: null,
       users: [],
-      searchQuery: "",
+      userLookupQuery: "",
       fitnessClasses: [],
       newClass: {
         type: "",
@@ -252,13 +253,28 @@ export default {
       deleteUsername: "",
       referrals: [],
       referralSearchQuery: "",
+      classLookupQuery: "",
+      manageUsername: "",
+      manageClassType: "",
     };
   },
   computed: {
     filteredUsers() {
-      if (this.searchQuery) {
+      if (this.userLookupQuery) {
         return this.users.filter((user) =>
-          user.username.toLowerCase().includes(this.searchQuery.toLowerCase())
+          user.username
+            .toLowerCase()
+            .includes(this.userLookupQuery.toLowerCase())
+        );
+      }
+      return this.users;
+    },
+    filteredUserClasses() {
+      if (this.classLookupQuery) {
+        return this.users.filter((user) =>
+          user.username
+            .toLowerCase()
+            .includes(this.classLookupQuery.toLowerCase())
         );
       }
       return this.users;
@@ -306,15 +322,15 @@ export default {
           console.log(error);
         });
     },
-    deleteUser() {
-      if (this.deleteUsername.trim().toLowerCase() === "admin") {
+    deleteUser(username) {
+      if (username.toLowerCase() === "admin") {
         alert("Cannot delete the admin user.");
         return;
       }
 
       const userStore = useUserStore();
       const userData = {
-        username: this.deleteUsername,
+        username: username,
       };
 
       axios
@@ -322,16 +338,20 @@ export default {
           headers: { Authorization: `Bearer ${userStore.token}` },
         })
         .then(() => {
-          this.users = this.users.filter(
-            (user) => user.username !== this.deleteUsername
-          );
+          this.users = this.users.filter((user) => user.username !== username);
           alert("User deleted successfully.");
-          this.deleteUsername = ""; // Reset the input field
         })
         .catch((error) => {
           console.error(error);
           alert("An error occurred: " + error.response.data.message);
         });
+    },
+    confirmDelete(user) {
+      if (
+        confirm(`Are you sure you want to delete ${user.username}'s account?`)
+      ) {
+        this.deleteUser(user.username);
+      }
     },
     fetchFitnessClasses() {
       const userStore = useUserStore();
@@ -364,43 +384,48 @@ export default {
         });
     },
 
-    deleteFitnessClass() {
+    deleteFitnessClass(classType) {
       const userStore = useUserStore();
-      if (this.newClass.type.trim() === "") {
-        alert("Please enter a class type.");
-        return;
-      }
-
       axios
         .post(
           "http://localhost:8000/admin/fitnessclass/delete",
-          this.newClass,
+          { type: classType },
           {
             headers: { Authorization: `Bearer ${userStore.token}` },
           }
         )
-        .then((response) => {
-          // Remove the deleted class from the fitnessClasses array
+        .then(() => {
           this.fitnessClasses = this.fitnessClasses.filter(
-            (fitnessClass) => fitnessClass.type !== this.newClass.type
+            (fitnessClass) => fitnessClass.type !== classType
           );
-          this.newClass.type = ""; // Reset the input field
-          alert(response.data);
+          alert("Class deleted successfully.");
         })
         .catch((error) => {
           console.error(error);
           alert("An error occurred during class deletion");
         });
     },
+    confirmDeleteClass(fitnessClass) {
+      if (
+        confirm(
+          `Are you sure you want to delete the ${fitnessClass.type} class?`
+        )
+      ) {
+        this.deleteFitnessClass(fitnessClass.type);
+      }
+    },
 
     registerFitnessClass() {
       const userStore = useUserStore();
       const requestData = {
-        username: this.username,
-        classType: this.classType,
+        username: this.manageUsername,
+        classType: this.manageClassType,
       };
 
-      if (this.username.trim() === "" && this.classType.trim() === "") {
+      if (
+        this.manageUsername.trim() === "" &&
+        this.manageClassType.trim() === ""
+      ) {
         alert("Please enter both username and class type.");
         return;
       }
@@ -425,11 +450,14 @@ export default {
     unregisterFitnessClass() {
       const userStore = useUserStore();
       const requestData = {
-        username: this.username,
-        classType: this.classType,
+        username: this.manageUsername,
+        classType: this.manageClassType,
       };
 
-      if (this.username.trim() === "" || this.classType.trim() === "") {
+      if (
+        this.manageUsername.trim() === "" ||
+        this.manageClassType.trim() === ""
+      ) {
         alert("Please enter both username and class type.");
         return;
       }
@@ -439,8 +467,9 @@ export default {
           headers: { Authorization: `Bearer ${userStore.token}` },
         })
         .then((response) => {
-          alert(response.data + "Unregistered Successfully!");
+          alert(response.data + " Unregistered Successfully!");
           this.fetchUser();
+          this.registeredClasses = null;
           // Optional: Code to update the UI accordingly
         })
         .catch((error) => {
@@ -733,6 +762,34 @@ tr:nth-child(even) {
   margin-right: 10px;
 }
 
+.add-class-form select {
+  width: 100%;
+  padding: 8px 15px;
+  margin: 20px 0 20px 10px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: white;
+  transition: border-color 0.3s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.add-class-form select:focus {
+  outline: none;
+  border-color: #880000;
+}
+
+.add-class-form select {
+  background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px top 50%;
+  background-size: 12px;
+}
+
 button {
   padding: 5px 10px;
   font-size: 14px;
@@ -741,11 +798,25 @@ button {
   background-color: #313131;
   transition: background-color 0.3s, border-color 0.3s;
   cursor: pointer;
+  color: white;
+  margin: 2px;
 }
 
 button.red-button {
   border-color: #880000;
   background-color: #880000;
+  color: rgb(255, 255, 255);
+}
+
+.red-button {
+  border-color: #880000;
+  background-color: #880000;
+  color: rgb(255, 255, 255);
+}
+
+.green-button {
+  border-color: #0b8800;
+  background-color: #0b8800;
   color: rgb(255, 255, 255);
 }
 
@@ -794,6 +865,9 @@ button:disabled {
   }
 
   .search-input {
+    font-size: 14px;
+  }
+  .add-class-form select {
     font-size: 14px;
   }
 }
