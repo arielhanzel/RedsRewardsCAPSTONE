@@ -26,6 +26,15 @@
               class="toggle-icon"
             />
           </span>
+          <ul class="password-criteria">
+            <li :class="{ valid: isMinLength }">At least 8 characters</li>
+            <li :class="{ valid: hasUpperCase }">
+              At least one uppercase letter
+            </li>
+            <li :class="{ valid: hasSpecialChar }">
+              At least one special character
+            </li>
+          </ul>
         </div>
         <input type="text" placeholder="Referrer name" v-model="referrer" />
         <button type="submit">Sign Up</button>
@@ -112,11 +121,25 @@ button[type="submit"]:hover {
 .toggle-icon {
   position: absolute;
   right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 28px;
   cursor: pointer;
   width: 20px;
   height: 20px;
+}
+
+.password-criteria {
+  list-style-type: none;
+  padding: 0;
+  text-align: left;
+}
+
+.password-criteria li {
+  color: grey;
+  font-size: 0.8rem;
+}
+
+.password-criteria li.valid {
+  color: green;
 }
 </style>
 
@@ -140,21 +163,37 @@ export default {
     },
     async signup() {
       const userStore = useUserStore();
-      try {
-        await userStore.signup(
-          this.username,
-          this.email,
-          this.password,
-          this.referrer
-        );
-      } catch (error) {
-        alert("An error occurred during sign up.");
-        console.error("Error during sign up:", error);
+      if (this.isMinLength && this.hasUpperCase && this.hasSpecialChar) {
+        try {
+          await userStore.signup(
+            this.username,
+            this.email,
+            this.password,
+            this.referrer
+          );
+        } catch (error) {
+          alert("An error occurred during sign up.");
+          console.error("Error during sign up:", error);
+        }
+      } else {
+        alert("Password does not meet the required criteria.");
       }
     },
   },
   mounted() {
     document.title = "Red's Rewards - Sign Up";
+  },
+
+  computed: {
+    isMinLength() {
+      return this.password.length >= 8;
+    },
+    hasUpperCase() {
+      return /[A-Z]/.test(this.password);
+    },
+    hasSpecialChar() {
+      return /[^A-Za-z0-9]/.test(this.password);
+    },
   },
 };
 </script>
