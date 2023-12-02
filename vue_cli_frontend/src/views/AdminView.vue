@@ -172,7 +172,7 @@
       <input
         type="text"
         v-model="referralLookupQuery"
-        placeholder="Search by referrer or referee name..."
+        placeholder="Search by referrer Username"
         class="search-input"
       />
       <div class="table-container">
