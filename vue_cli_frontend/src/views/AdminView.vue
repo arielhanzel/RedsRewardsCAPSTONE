@@ -168,6 +168,41 @@
     </div>
 
     <div class="section">
+      <h1>Referral Lookup</h1>
+      <input
+        type="text"
+        v-model="referralLookupQuery"
+        placeholder="Search by referrer or referee name..."
+        class="search-input"
+      />
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Referrer Username</th>
+              <th>Referee Usernames</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(referees, referrer) in filteredReferrals"
+              :key="referrer"
+            >
+              <td>{{ referrer }}</td>
+              <td>
+                <ul>
+                  <li v-for="referee in referees" :key="referee">
+                    {{ referee }}
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
       <h1>Reward Points Overview</h1>
       <div class="table-container">
         <table>
@@ -251,11 +286,12 @@ export default {
       unapprovedRewards: [],
       unapprovedRewardsSearchQuery: "",
       deleteUsername: "",
-      referrals: [],
-      referralSearchQuery: "",
       classLookupQuery: "",
       manageUsername: "",
       manageClassType: "",
+      rawReferrals: [],
+      transformedReferrals: {},
+      referralLookupQuery: "",
     };
   },
   computed: {
@@ -279,6 +315,21 @@ export default {
       }
       return this.users;
     },
+    filteredReferrals() {
+      const filtered = {};
+      for (const [referrer, referees] of Object.entries(
+        this.transformedReferrals
+      )) {
+        if (
+          referrer
+            .toLowerCase()
+            .includes(this.referralLookupQuery.toLowerCase())
+        ) {
+          filtered[referrer] = referees;
+        }
+      }
+      return filtered;
+    },
     filteredUnapprovedRewards() {
       if (this.unapprovedRewardsSearchQuery) {
         return this.unapprovedRewards.filter((reward) =>
@@ -288,16 +339,6 @@ export default {
         );
       }
       return this.unapprovedRewards;
-    },
-    filteredReferrals() {
-      if (this.referralSearchQuery) {
-        return Object.entries(this.referrals).filter(([username]) =>
-          username
-            .toLowerCase()
-            .includes(this.referralSearchQuery.toLowerCase())
-        );
-      }
-      return Object.entries(this.referrals);
     },
   },
   methods: {
@@ -478,6 +519,30 @@ export default {
         });
     },
 
+    fetchReferrals() {
+      const userStore = useUserStore();
+      axios
+        .post("http://localhost:8000/admin/referral/view", null, {
+          headers: { Authorization: `Bearer ${userStore.token}` },
+        })
+        .then((response) => {
+          this.rawReferrals = response.data;
+          this.transformReferrals();
+        })
+        .catch((error) => console.error(error));
+    },
+    transformReferrals() {
+      const transformed = {};
+      this.rawReferrals.forEach((referral) => {
+        const { referrerUsername, refereeUsername } = referral;
+        if (!transformed[referrerUsername]) {
+          transformed[referrerUsername] = [];
+        }
+        transformed[referrerUsername].push(refereeUsername);
+      });
+      this.transformedReferrals = transformed;
+    },
+
     fetchRewardPoints() {
       const userStore = useUserStore();
       axios
@@ -540,45 +605,6 @@ export default {
         })
         .catch((error) => console.error(error));
     },
-    fetchReferrals() {
-      const userStore = useUserStore();
-      axios
-        .post("http://localhost:8000/admin/referral/view", null, {
-          headers: { Authorization: `Bearer ${userStore.token}` },
-        })
-        .then((response) => {
-          this.processReferralData(response.data);
-        })
-        .catch((error) => console.error(error));
-    },
-
-    processReferralData(referralData) {
-      // Initialize an object to hold processed data
-      let processedData = {};
-
-      referralData.forEach((referral) => {
-        // For each referee, add their referrer
-        if (!processedData[referral.refereeUsername]) {
-          processedData[referral.refereeUsername] = {
-            referrer: referral.referrerUsername,
-            referees: [],
-          };
-        }
-
-        // For each referrer, add their referees
-        if (!processedData[referral.referrerUsername]) {
-          processedData[referral.referrerUsername] = {
-            referrer: "",
-            referees: [],
-          };
-        }
-        processedData[referral.referrerUsername].referees.push(
-          referral.refereeUsername
-        );
-      });
-
-      this.referrals = processedData;
-    },
   },
   mounted() {
     const userStore = useUserStore();
@@ -605,9 +631,9 @@ export default {
         console.log(error);
       });
     this.fetchFitnessClasses();
+    this.fetchReferrals();
     this.fetchRewardPoints();
     this.fetchUnapprovedRewards();
-    this.fetchReferrals();
   },
 };
 </script>
